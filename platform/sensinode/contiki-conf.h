@@ -77,17 +77,6 @@
 #define UART_ONE_CONF_WITH_INPUT 1
 #endif
 
-/* Output all captured frames over the UART in hexdump format */
-#ifndef CC2430_RF_CONF_HEXDUMP
-#define CC2430_RF_CONF_HEXDUMP 0
-#endif
-
-#if CC2430_RF_CONF_HEXDUMP
-/* We need UART1 output */
-#undef UART_ONE_CONF_ENABLE
-#define UART_ONE_CONF_ENABLE   1
-#endif
-
 /* Code Shortcuts */
 /*
  * When set, the RF driver is no longer a contiki process and the RX ISR is
