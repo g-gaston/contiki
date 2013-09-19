@@ -1,6 +1,9 @@
 DEFINES+=PROJECT_CONF_H=\"project-conf.h\"
 PROJECT_SOURCEFILES += sniffer-rdc.c netstack.c
 
+TARGETS_DIR := targets
+PROJECTDIRS += $(TARGETS_DIR)
+
 CONTIKI_PROJECT = sniffer
 
 all: $(CONTIKI_PROJECT) 
@@ -13,8 +16,8 @@ ifeq ($(TARGET),)
   -include Makefile.target
 endif
 
-TARGET_DRIVER = $(wildcard sniffer-arch-$(TARGET).c)
-ifneq ($(TARGET_DRIVER),)
+TARGET_DRIVER = sniffer-arch-$(TARGET).c
+ifneq ($(wildcard $(TARGETS_DIR)/$(TARGET_DRIVER)),)
   PROJECT_SOURCEFILES += $(TARGET_DRIVER)
 else
   $(error target $(TARGET) not supported. See README.md for the list of supported targets)
