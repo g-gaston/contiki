@@ -42,7 +42,7 @@
 #include "sys/timer.h"
 #include "sniffer.h"
 
-#define DEBUG DEBUG_PRINT
+#define DEBUG DEBUG_NONE
 #include "net/uip-debug.h"
 #include "debug.h"
 #include <string.h>
