@@ -74,6 +74,30 @@ uip_mcast6_route_lookup(uip_ipaddr_t *group)
   return NULL;
 }
 /*---------------------------------------------------------------------------*/
+#if UIP_MCAST6_ENGINE == UIP_MCAST6_ENGINE_BMRF
+uip_mcast6_route_t *
+uip_mcast6_route_add(uip_ipaddr_t *group, uip_lladr_t *subscriber)
+{
+  locmcastrt = NULL;
+  for(locmcastrt = list_head(mcast_route_list);
+      locmcastrt != NULL;
+      locmcastrt = list_item_next(locmcastrt)) {
+    if(uip_ipaddr_cmp(&locmcastrt->group, group) && linkaddr_cmp(&locmcastrt->subscribed_child, subscriber)) {
+      // The entry already exists
+      return NULL;
+    }
+  }
+  locmcastrt = memb_alloc(&mcast_route_memb);
+  if(locmcastrt == NULL) {
+      return NULL;
+  }
+  list_add(mcast_route_list, locmcastrt);
+  uip_ipaddr_copy(&(locmcastrt->group), group);
+  linkaddr_copy(&(locmcastrt->subscribed_child), subscriber);
+
+  return locmcastrt;
+}
+#else
 uip_mcast6_route_t *
 uip_mcast6_route_add(uip_ipaddr_t *group)
 {
@@ -94,6 +118,7 @@ uip_mcast6_route_add(uip_ipaddr_t *group)
 
   return locmcastrt;
 }
+#endif /* UIP_MCAST6_ENGINE */
 /*---------------------------------------------------------------------------*/
 void
 uip_mcast6_route_rm(uip_mcast6_route_t *route)

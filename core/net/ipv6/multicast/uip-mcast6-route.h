@@ -49,6 +49,9 @@ typedef struct uip_mcast6_route {
   uip_ipaddr_t group;
   uint32_t lifetime; /* seconds */
   void *dag; /* Pointer to an rpl_dag_t struct */
+#if UIP_MCAST6_ENGINE == UIP_MCAST6_ENGINE_BMRF
+  uip_lladdr_t subscribed_child;
+#endif
 } uip_mcast6_route_t;
 /*---------------------------------------------------------------------------*/
 /** \name Multicast Routing Table Manipulation */
