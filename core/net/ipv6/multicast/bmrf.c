@@ -46,6 +46,7 @@
 #include "net/ipv6/multicast/uip-mcast6-stats.h"
 #include "net/ipv6/multicast/bmrf.h"
 #include "net/rpl/rpl.h"
+#include "net/rpl/rpl-private.h"
 #include "net/netstack.h"
 #include "lib/list.h"
 #include <string.h>
@@ -54,6 +55,7 @@
 #include "net/ip/uip-debug.h"
 
 #if UIP_CONF_IPV6
+#if UIP_MCAST6_ENGINE == UIP_MCAST6_ENGINE_BMRF
 /*---------------------------------------------------------------------------*/
 /* Macros */
 /*---------------------------------------------------------------------------*/
@@ -74,7 +76,7 @@ static uint8_t fwd_spread;
 /*---------------------------------------------------------------------------*/
 #define UIP_IP_BUF                ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
 #define UIP_HBHO_BUF              ((struct uip_hbho_hdr *)&uip_buf[uip_l2_l3_hdr_len])
-#define UIP_EXT_HDR_OPT_RPL_BUF   ((struct uip_ext_hdr_opt_rpl *)&uip_buf[uip_l2_l3_hdr_len + uip_ext_opt_offset])
+#define UIP_EXT_HDR_OPT_RPL_BUF   ((struct uip_ext_hdr_opt_rpl *)&uip_buf[uip_l2_l3_hdr_len + 2])
 /*---------------------------------------------------------------------------*/
 static void
 mcast_fwd(void *p)
@@ -290,4 +292,5 @@ const struct uip_mcast6_driver bmrf_driver = {
 };
 /*---------------------------------------------------------------------------*/
 
+#endif /* UIP_MCAST6_ENGINE */
 #endif /* UIP_CONF_IPV6 */
