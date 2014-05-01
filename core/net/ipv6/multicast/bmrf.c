@@ -86,7 +86,7 @@ mcast_fwd(void *p)
   uip_len = 0;
 }
 static void
-mcast_fwd_with_broadcast(void *p)
+mcast_fwd_with_broadcast(void)
 {
   /* If we enter here, we will definitely forward */
   UIP_MCAST6_STATS_ADD(mcast_fwd);
@@ -128,7 +128,7 @@ mcast_fwd_with_broadcast(void *p)
          uip_len, fwd_delay, fwd_spread);
 }
 static void
-mcast_fwd_with_unicast(void *p)
+mcast_fwd_with_unicast(void)
 {
   uip_mcast6_route_t *mcast_entries;
   mcast_entries = NULL;
@@ -142,7 +142,7 @@ mcast_fwd_with_unicast(void *p)
   }
 }
 static void
-mcast_fwd_with_unicast_up_down(uip_lladdr_t *preferred_parent)
+mcast_fwd_with_unicast_up_down(uip_lladdr_t **preferred_parent)
 {
   uip_mcast6_route_t *mcast_entries;
   mcast_entries = NULL;
