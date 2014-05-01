@@ -40,6 +40,7 @@
 #include "lib/list.h"
 #include "lib/memb.h"
 #include "net/ip/uip.h"
+#include "net/linkaddr.h"
 #include "net/ipv6/multicast/uip-mcast6-route.h"
 
 #include <stdint.h>
@@ -74,9 +75,9 @@ uip_mcast6_route_lookup(uip_ipaddr_t *group)
   return NULL;
 }
 /*---------------------------------------------------------------------------*/
-#if UIP_MCAST6_ENGINE == UIP_MCAST6_ENGINE_BMRF
+#if UIP_MCAST6_CONF_ENGINE == UIP_MCAST6_ENGINE_BMRF
 uip_mcast6_route_t *
-uip_mcast6_route_add(uip_ipaddr_t *group, uip_lladr_t *subscriber)
+uip_mcast6_route_add(uip_ipaddr_t *group, uip_lladdr_t *subscriber)
 {
   locmcastrt = NULL;
   for(locmcastrt = list_head(mcast_route_list);
