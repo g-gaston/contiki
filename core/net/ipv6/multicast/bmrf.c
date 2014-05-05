@@ -51,6 +51,8 @@
 #include "lib/list.h"
 #include <string.h>
 
+#define uip_lladdr_cmp(addr1, addr2) (memcmp(addr1, addr2, UIP_LLADDR_LEN) == 0)
+
 #define DEBUG DEBUG_NONE
 #include "net/ip/uip-debug.h"
 
@@ -152,7 +154,7 @@ mcast_fwd_with_unicast_up_down(uip_lladdr_t **preferred_parent)
       mcast_entries != NULL;
       mcast_entries = list_item_next(mcast_entries)) {
     if(uip_ipaddr_cmp(&mcast_entries->group, &UIP_IP_BUF->destipaddr)
-      && !linkaddr_cmp(&mcast_entries->subscribed_child, packetbuf_addr(PACKETBUF_ADDR_SENDER))) {
+      && !uip_lladdr_cmp(&mcast_entries->subscribed_child, packetbuf_addr(PACKETBUF_ADDR_SENDER))) {
       //Send to this address &mcast_entries->subscribed_child
       tcpip_output(&mcast_entries->subscribed_child);
     }
@@ -203,13 +205,13 @@ in()
   }
 
   /* LL Broadcast or LL Unicast from above*/
-  if(linkaddr_cmp(packetbuf_addr(PACKETBUF_ADDR_SENDER),&linkaddr_null)
-    || linkaddr_cmp(parent_lladdr, packetbuf_addr(PACKETBUF_ADDR_SENDER))) {
+  if(uip_lladdr_cmp(packetbuf_addr(PACKETBUF_ADDR_SENDER),&linkaddr_null)
+    || uip_lladdr_cmp(parent_lladdr, packetbuf_addr(PACKETBUF_ADDR_SENDER))) {
     /*
      * We accept a datagram if it arrived from our preferred parent, discard
      * otherwise.
      */
-    if(linkaddr_cmp(parent_lladdr, packetbuf_addr(PACKETBUF_ADDR_SENDER))) {
+    if(uip_lladdr_cmp(parent_lladdr, packetbuf_addr(PACKETBUF_ADDR_SENDER))) {
       PRINTF("BMRF: Routable in but BMRF ignored it\n");
       UIP_MCAST6_STATS_ADD(mcast_dropped);
       return UIP_MCAST6_DROP;
