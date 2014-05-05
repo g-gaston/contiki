@@ -40,7 +40,6 @@
 #include "lib/list.h"
 #include "lib/memb.h"
 #include "net/ip/uip.h"
-#include "net/linkaddr.h"
 #include "net/ipv6/multicast/uip-mcast6-route.h"
 
 #include <stdint.h>
@@ -83,7 +82,7 @@ uip_mcast6_route_add(uip_ipaddr_t *group, uip_lladdr_t *subscriber)
   for(locmcastrt = list_head(mcast_route_list);
       locmcastrt != NULL;
       locmcastrt = list_item_next(locmcastrt)) {
-    if(uip_ipaddr_cmp(&locmcastrt->group, group) && linkaddr_cmp(&locmcastrt->subscribed_child, subscriber)) {
+    if(uip_ipaddr_cmp(&locmcastrt->group, group) && memcmp(&locmcastrt->subscribed_child, subscriber, UIP_LLADDR_LEN)) {
       // The entry already exists
       return NULL;
     }
