@@ -146,7 +146,7 @@ mcast_fwd_with_unicast(void)
   }
 }
 static void
-mcast_fwd_with_unicast_up_down(uip_lladdr_t **preferred_parent)
+mcast_fwd_with_unicast_up_down(const uip_lladdr_t *preferred_parent)
 {
   uip_mcast6_route_t *mcast_entries;
   mcast_entries = NULL;
@@ -160,7 +160,7 @@ mcast_fwd_with_unicast_up_down(uip_lladdr_t **preferred_parent)
     }
   }
   //Send to our preferred parent address preferred_parent
-  tcpip_output(&preferred_parent);
+  tcpip_output(preferred_parent);
 }
 /*---------------------------------------------------------------------------*/
 static uint8_t
@@ -179,6 +179,8 @@ in()
    */
   if(UIP_IP_BUF->proto == UIP_PROTO_HBHO && UIP_HBHO_BUF->len == RPL_HOP_BY_HOP_LEN - 8) {
     d = ((rpl_instance_t *)rpl_get_instance(UIP_EXT_HDR_OPT_RPL_BUF->instance))->current_dag;
+  } else {
+    d = NULL;
   }
 
   if(!d) {
@@ -244,13 +246,13 @@ in()
     }
   } else {
     uip_ipaddr_t *ll_sender_ip_address;
-    ll_sender_ip_address = uip_ds6_nbr_ipaddr_from_lladdr(packetbuf_addr(PACKETBUF_ADDR_SENDER));
+    ll_sender_ip_address = uip_ds6_nbr_ipaddr_from_lladdr((uip_lladdr_t *)packetbuf_addr(PACKETBUF_ADDR_SENDER));
 
     /* Unicast from below */
     if (ll_sender_ip_address != NULL && uip_ds6_route_lookup(ll_sender_ip_address)) {
       /* If we enter here, we will definitely forward */
       UIP_MCAST6_STATS_ADD(mcast_fwd);
-      mcast_fwd_with_unicast_up_down(&parent_lladdr);
+      mcast_fwd_with_unicast_up_down(parent_lladdr);
     } else {
       UIP_MCAST6_STATS_ADD(mcast_dropped);
       return UIP_MCAST6_DROP;
