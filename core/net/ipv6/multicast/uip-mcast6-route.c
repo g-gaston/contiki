@@ -93,7 +93,7 @@ uip_mcast6_route_add(uip_ipaddr_t *group, uip_lladdr_t *subscriber)
   }
   list_add(mcast_route_list, locmcastrt);
   uip_ipaddr_copy(&(locmcastrt->group), group);
-  linkaddr_copy(&(locmcastrt->subscribed_child), subscriber);
+  (*(&(locmcastrt->subscribed_child)) = *(subscriber)); // copy subscriber link layer address
 
   return locmcastrt;
 }
