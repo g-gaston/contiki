@@ -84,7 +84,7 @@ uip_mcast6_route_add(uip_ipaddr_t *group, uip_lladdr_t *subscriber)
       locmcastrt = list_item_next(locmcastrt)) {
     if(uip_ipaddr_cmp(&locmcastrt->group, group) && memcmp(&locmcastrt->subscribed_child, subscriber, UIP_LLADDR_LEN)) {
       // The entry already exists
-      return NULL;
+      return locmcastrt;
     }
   }
   locmcastrt = memb_alloc(&mcast_route_memb);
