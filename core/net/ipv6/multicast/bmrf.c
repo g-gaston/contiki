@@ -92,9 +92,6 @@ mcast_fwd(void *p)
 static void
 mcast_fwd_with_broadcast(void)
 {
-  /* If we enter here, we will definitely forward */
-  UIP_MCAST6_STATS_ADD(mcast_fwd);
-
   /*
    * Add a delay (D) of at least BMRF_FWD_DELAY() to compensate for how
    * contikimac handles broadcasts. We can't start our TX before the sender
@@ -177,13 +174,10 @@ in()
   /*
    * Fetch a pointer to the LL address of our preferred parent
    */
+  /* RPL HBHO present */
   if(UIP_IP_BUF->proto == UIP_PROTO_HBHO && UIP_HBHO_BUF->len == RPL_HOP_BY_HOP_LEN - 8) {
     d = ((rpl_instance_t *)rpl_get_instance(UIP_EXT_HDR_OPT_RPL_BUF->instance))->current_dag;
   } else {
-    d = NULL;
-  }
-
-  if(!d) {
     d = rpl_get_any_dag();
   }
 
