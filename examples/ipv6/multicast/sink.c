@@ -44,6 +44,7 @@
 #include "contiki-lib.h"
 #include "contiki-net.h"
 #include "net/ipv6/multicast/uip-mcast6.h"
+#include "dev/button-sensor.h"
 
 #include <string.h>
 
@@ -54,6 +55,7 @@
 
 static struct uip_udp_conn *sink_conn;
 static uint16_t count;
+static uint8_t subscribed;
 
 #define UIP_IP_BUF   ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
 
@@ -70,11 +72,23 @@ tcpip_handler(void)
 {
   if(uip_newdata()) {
     count++;
-    PRINTF("In: [0x%08lx], TTL %u, total %u\n",
+    PRINTF("In: sequence-msg [%lu], TTL %u, total %u , from: ",
         uip_ntohl((unsigned long) *((uint32_t *)(uip_appdata))),
         UIP_IP_BUF->ttl, count);
+    PRINT6ADDR(&UIP_IP_BUF->srcipaddr);
+    PRINTF("\n");
   }
   return;
+}
+/*---------------------------------------------------------------------------*/
+static void
+set_own_ip_address(void){
+  uip_ipaddr_t addr;
+
+  /* First, set our v6 global */
+  uip_ip6addr(&addr, 0xaaaa, 0, 0, 0, 0, 0, 0, 0);
+  uip_ds6_set_addr_iid(&addr, &uip_lladdr);
+  uip_ds6_addr_add(&addr, 0, ADDR_AUTOCONF);
 }
 /*---------------------------------------------------------------------------*/
 static uip_ds6_maddr_t *
@@ -83,36 +97,52 @@ join_mcast_group(void)
   uip_ipaddr_t addr;
   uip_ds6_maddr_t *rv;
 
-  /* First, set our v6 global */
-  uip_ip6addr(&addr, 0xaaaa, 0, 0, 0, 0, 0, 0, 0);
-  uip_ds6_set_addr_iid(&addr, &uip_lladdr);
-  uip_ds6_addr_add(&addr, 0, ADDR_AUTOCONF);
-
   /*
    * IPHC will use stateless multicast compression for this destination
    * (M=1, DAC=0), with 32 inline bits (1E 89 AB CD)
    */
   uip_ip6addr(&addr, 0xFF1E,0,0,0,0,0,0x89,0xABCD);
-  rv = uip_ds6_maddr_add(&addr);
-
+  rv = uip_ds6_maddr_lookup(&addr);
   if(rv) {
+    rv->isused = 1;
     PRINTF("Joined multicast group ");
     PRINT6ADDR(&uip_ds6_maddr_lookup(&addr)->ipaddr);
     PRINTF("\n");
+  } else {
+    rv = uip_ds6_maddr_add(&addr);
+    if(rv) {
+      PRINTF("Joined multicast group ");
+      PRINT6ADDR(&uip_ds6_maddr_lookup(&addr)->ipaddr);
+      PRINTF("\n");
+    }
   }
   return rv;
+}
+/*---------------------------------------------------------------------------*/
+static void
+unjoin_mcast_group(void){
+  uip_ipaddr_t addr;
+  uip_ds6_maddr_t *mcast_addrs;
+  uip_ip6addr(&addr, 0xFF1E,0,0,0,0,0,0x89,0xABCD);
+  mcast_addrs = uip_ds6_maddr_lookup(&addr);
+  uip_ds6_maddr_rm(mcast_addrs);
+  PRINTF("Unsubscribing from multicast group\n");
 }
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(mcast_sink_process, ev, data)
 {
   PROCESS_BEGIN();
+  SENSORS_ACTIVATE(button_sensor);
 
   PRINTF("Multicast Engine: '%s'\n", UIP_MCAST6.name);
+
+  set_own_ip_address();
 
   if(join_mcast_group() == NULL) {
     PRINTF("Failed to join multicast group\n");
     PROCESS_EXIT();
   }
+  subscribed = 1;
 
   count = 0;
 
@@ -128,6 +158,17 @@ PROCESS_THREAD(mcast_sink_process, ev, data)
     PROCESS_YIELD();
     if(ev == tcpip_event) {
       tcpip_handler();
+    } else if(ev == sensors_event && data == &button_sensor) {
+      if(subscribed == 1) {
+        unjoin_mcast_group();
+        subscribed = 0;
+      } else {
+        if(join_mcast_group() == NULL) {
+          PRINTF("Failed to join multicast group\n");
+          PROCESS_EXIT();
+        }
+        subscribed = 1;
+      }
     }
   }
 

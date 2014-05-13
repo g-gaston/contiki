@@ -53,6 +53,8 @@
 
 #define uip_lladdr_cmp(addr1, addr2) (memcmp(addr1, addr2, UIP_LLADDR_LEN) == 0)
 
+#define uip_partial_cmp(addr1, addr2, len) (memcmp(addr1, addr2, len) == 0)
+
 #define DEBUG DEBUG_NONE
 #include "net/ip/uip-debug.h"
 
@@ -89,6 +91,7 @@ mcast_fwd(void *p)
   tcpip_output(NULL);
   uip_len = 0;
 }
+#if BMRF_MODE != BMRF_UNICAST_MODE
 static void
 mcast_fwd_with_broadcast(void)
 {
@@ -128,6 +131,7 @@ mcast_fwd_with_broadcast(void)
   PRINTF("BMRF: %u bytes: fwd in %u [%u]\n",
          uip_len, fwd_delay, fwd_spread);
 }
+#endif /* BMRF_MODE */
 static void
 mcast_fwd_with_unicast(void)
 {
@@ -139,25 +143,89 @@ mcast_fwd_with_unicast(void)
     if(uip_ipaddr_cmp(&mcast_entries->group, &UIP_IP_BUF->destipaddr)) {
       //Send to this address &mcast_entries->subscribed_child
       tcpip_output(&mcast_entries->subscribed_child);
+      PRINTF("BMRF: Forwarded with LL-unicast to ");
+      PRINTLLADDR(&mcast_entries->subscribed_child);
+      PRINTF("\n");
     }
   }
+  PRINTF("BMRF: Ended forwarding with LL-unicast\n");
 }
 static void
 mcast_fwd_with_unicast_up_down(const uip_lladdr_t *preferred_parent)
 {
   uip_mcast6_route_t *mcast_entries;
+  uip_lladdr_t sender;
   mcast_entries = NULL;
+  (sender = *((uip_lladdr_t *)packetbuf_addr(PACKETBUF_ADDR_SENDER)));
   for(mcast_entries = uip_mcast6_route_list_head();
       mcast_entries != NULL;
       mcast_entries = list_item_next(mcast_entries)) {
     if(uip_ipaddr_cmp(&mcast_entries->group, &UIP_IP_BUF->destipaddr)
-      && !uip_lladdr_cmp(&mcast_entries->subscribed_child, packetbuf_addr(PACKETBUF_ADDR_SENDER))) {
+      && !uip_lladdr_cmp(&mcast_entries->subscribed_child, &sender)) {
       //Send to this address &mcast_entries->subscribed_child
       tcpip_output(&mcast_entries->subscribed_child);
+      PRINTF("BMRF: Forwarded with LL-unicast to ");
+      PRINTLLADDR(&mcast_entries->subscribed_child);
+      PRINTF("\n");
     }
   }
   //Send to our preferred parent address preferred_parent
-  tcpip_output(preferred_parent);
+  if(preferred_parent != NULL) {
+    tcpip_output(preferred_parent);
+    PRINTF("BMRF: Forwarded with LL-unicast up and down\n");
+    PRINTF("BMRF: Preferred parent LL: ");
+    PRINTLLADDR(preferred_parent);
+    PRINTF("\n");
+  }
+
+}
+static void
+mcast_fwd_down(void){
+#if BMRF_MODE == BMRF_UNICAST_MODE
+  mcast_fwd_with_unicast();
+#elif BMRF_MODE == BMRF_BROADCAST_MODE
+  mcast_fwd_with_broadcast();
+#elif BMRF_MODE == BMRF_MIXED_MODE
+  uip_mcast6_route_t *locmcastrt;
+  uint8_t entries_number;
+  locmcastrt = NULL;
+  entries_number = 0;
+  for(locmcastrt = uip_mcast6_route_list_head();
+      locmcastrt != NULL;
+      locmcastrt = list_item_next(locmcastrt)) {
+    if(uip_ipaddr_cmp(&locmcastrt->group, &UIP_IP_BUF->destipaddr) && ++entries_number > BMRF_BROADCAST_THRESHOLD) {
+      break;
+    }
+  }
+  if(entries_number > BMRF_BROADCAST_THRESHOLD) {
+    mcast_fwd_with_broadcast();
+  } else {
+    mcast_fwd_with_unicast();
+  }
+#endif /* BMRF_MODE */
+}
+/*---------------------------------------------------------------------------*/
+/* Dirty hack for searching a route for an ip from nbr table */
+uip_ds6_route_t *
+uip_ds6_route_lookup_from_nbr_ip(uip_ipaddr_t *addr)
+{
+  uip_ds6_route_t *r;
+  uip_ds6_route_t *found_route;
+  uint8_t longestmatch;
+
+  found_route = NULL;
+  longestmatch = 0;
+  for(r = uip_ds6_route_head();
+      r != NULL;
+      r = uip_ds6_route_next(r)) {
+    if(r->length >= longestmatch &&
+       uip_partial_cmp(&(((uint16_t *)addr)[1]), &(((uint16_t *)(&r->ipaddr))[1]), ((r->length>>3) - 2))) {
+      longestmatch = r->length;
+      found_route = r;
+    }
+  }
+
+  return found_route;
 }
 /*---------------------------------------------------------------------------*/
 static uint8_t
@@ -166,10 +234,6 @@ in()
   rpl_dag_t *d;                       /* Our DODAG */
   uip_ipaddr_t *parent_ipaddr;        /* Our pref. parent's IPv6 address */
   const uip_lladdr_t *parent_lladdr;  /* Our pref. parent's LL address */
-#if BMRF_MODE == BMRF_MIXED_MODE
-  uip_mcast6_route_t *locmcastrt;
-  uint8_t entries_number;
-#endif
 
   /*
    * Fetch a pointer to the LL address of our preferred parent
@@ -182,75 +246,79 @@ in()
   }
 
   if(!d) {
+    PRINTF("BMRF: Dropped, no DODAG\n");
     UIP_MCAST6_STATS_ADD(mcast_dropped);
     return UIP_MCAST6_DROP;
   }
 
-  /* Retrieve our preferred parent's LL address */
-  parent_ipaddr = rpl_get_parent_ipaddr(d->preferred_parent);
-  parent_lladdr = uip_ds6_nbr_lladdr_from_ipaddr(parent_ipaddr);
+  if(d->rank != ROOT_RANK(default_instance)) {
+    /* Retrieve our preferred parent's LL address */
+    parent_ipaddr = rpl_get_parent_ipaddr(d->preferred_parent);
+    parent_lladdr = uip_ds6_nbr_lladdr_from_ipaddr(parent_ipaddr);
+  } else {
+    parent_lladdr = NULL;
+    if(uip_lladdr_cmp(packetbuf_addr(PACKETBUF_ADDR_RECEIVER),&linkaddr_null)) {
+      PRINTF("BMRF: Dropped, broadcast from a child\n");
+      UIP_MCAST6_STATS_ADD(mcast_dropped);
+      return UIP_MCAST6_DROP;
+    } else {
+      goto packet_from_bellow;
+    }
+  }
 
   if(parent_lladdr == NULL) {
+    PRINTF("BMRF: Dropped, no preferred parent\n");
     UIP_MCAST6_STATS_ADD(mcast_dropped);
     return UIP_MCAST6_DROP;
   }
 
   if(UIP_IP_BUF->ttl <= 1) {
+    PRINTF("BMRF: Dropped beacause ttl=0\n");
     UIP_MCAST6_STATS_ADD(mcast_dropped);
     return UIP_MCAST6_DROP;
   }
 
-  /* LL Broadcast or LL Unicast from above*/
-  if(uip_lladdr_cmp(packetbuf_addr(PACKETBUF_ADDR_SENDER),&linkaddr_null)
+  /* LL Broadcast or LL Unicast from above us */
+  if(uip_lladdr_cmp(packetbuf_addr(PACKETBUF_ADDR_RECEIVER),&linkaddr_null)
     || uip_lladdr_cmp(parent_lladdr, packetbuf_addr(PACKETBUF_ADDR_SENDER))) {
     /*
      * We accept a datagram if it arrived from our preferred parent, discard
      * otherwise.
      */
-    if(uip_lladdr_cmp(parent_lladdr, packetbuf_addr(PACKETBUF_ADDR_SENDER))) {
+    if(!uip_lladdr_cmp(parent_lladdr, packetbuf_addr(PACKETBUF_ADDR_SENDER))) {
       PRINTF("BMRF: Routable in but BMRF ignored it\n");
       UIP_MCAST6_STATS_ADD(mcast_dropped);
       return UIP_MCAST6_DROP;
     }
-
+    PRINTF("BMRF: Broadcast packet or from above. LL-sender: ");
+    PRINTLLADDR(packetbuf_addr(PACKETBUF_ADDR_SENDER));
+    PRINTF("\n");
     /* If we have an entry in the mcast routing table, something with
      * a higher RPL rank (somewhere down the tree) is a group member */
-    if(!uip_mcast6_route_lookup(&UIP_IP_BUF->destipaddr)) {
+    if(uip_mcast6_route_lookup(&UIP_IP_BUF->destipaddr)) {
       UIP_MCAST6_STATS_ADD(mcast_fwd);
-#if BMRF_MODE == BMRF_UNICAST_MODE
-      mcast_fwd_with_unicast_down();
-#elif BMRF_MODE == BMRF_BROADCAST_MODE
-      mcast_fwd_with_broadcast();
-#elif BMRF_MODE == BMRF_MIXED_MODE
-      locmcastrt = NULL;
-      entries_number = 0;
-      for(locmcastrt = uip_mcast6_route_list_head();
-          locmcastrt != NULL;
-          locmcastrt = list_item_next(locmcastrt)) {
-        if(uip_ipaddr_cmp(&locmcastrt->group, &UIP_IP_BUF->destipaddr) && ++entries_number > BMRF_BROADCAST_THRESHOLD) {
-          break;
-        }
-      }
-      if(entries_number > BMRF_BROADCAST_MODE) {
-        mcast_fwd_with_broadcast();
-      } else {
-        mcast_fwd_with_unicast();
-      }
-#endif /* BMRF_MODE */
+      mcast_fwd_down();
+    } else {
+      PRINTF("BMRF: No entries for this group\n");
     }
   } else {
+    packet_from_bellow: ;
     uip_ipaddr_t *ll_sender_ip_address;
     ll_sender_ip_address = uip_ds6_nbr_ipaddr_from_lladdr((uip_lladdr_t *)packetbuf_addr(PACKETBUF_ADDR_SENDER));
-
+    PRINTF("BMRF: Should be a packet from bellow. ll_src: ");
+    PRINTLLADDR((uip_lladdr_t *)packetbuf_addr(PACKETBUF_ADDR_SENDER));
+    PRINTF("\n");
     /* Unicast from below */
-    if (ll_sender_ip_address != NULL && uip_ds6_route_lookup(ll_sender_ip_address)) {
+    if (ll_sender_ip_address != NULL && uip_ds6_route_lookup_from_nbr_ip(ll_sender_ip_address) != NULL) {
       /* If we enter here, we will definitely forward */
       UIP_MCAST6_STATS_ADD(mcast_fwd);
       mcast_fwd_with_unicast_up_down(parent_lladdr);
     } else {
+      PRINTF("BMRF: Not a packet from bellow, drop\n");
       UIP_MCAST6_STATS_ADD(mcast_dropped);
       return UIP_MCAST6_DROP;
     }
+
   }
 
   UIP_MCAST6_STATS_ADD(mcast_in_all);
@@ -278,7 +346,33 @@ init()
 static void
 out()
 {
+  rpl_dag_t *dag;                       /* Our DODAG */
+  const uip_lladdr_t *parent_lladdr;  /* Our pref. parent's LL address */
+  dag = rpl_get_any_dag();
   UIP_MCAST6_STATS_ADD(mcast_out);
+  if(dag->rank != ROOT_RANK(default_instance)) {
+    /* Retrieve our preferred parent's LL address */
+    parent_lladdr = uip_ds6_nbr_lladdr_from_ipaddr(rpl_get_parent_ipaddr(dag->preferred_parent));
+
+    if(parent_lladdr != NULL) {
+      //Send to our preferred parent LL-address
+      PRINTF("BMRF: Send we are the seed because to our preferred parent with address: ");
+      PRINTLLADDR(parent_lladdr);
+      PRINTF("\n");
+      tcpip_output(parent_lladdr);
+    } else {
+      PRINTF("BMRF: We are the seed but not preferred parent found\n");
+    }
+  }
+
+  if(uip_mcast6_route_lookup(&UIP_IP_BUF->destipaddr)) {
+    mcast_fwd_down();
+  } else {
+    PRINTF("BMRF: No entries for this group\n");
+  }
+
+  /* Set uip_len = 0 to stop the core from re-sending it. */
+  uip_len = 0;
   return;
 }
 /*---------------------------------------------------------------------------*/

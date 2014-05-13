@@ -52,7 +52,7 @@
 
 #define MAX_PAYLOAD_LEN 120
 #define MCAST_SINK_UDP_PORT 3001 /* Host byte order */
-#define SEND_INTERVAL CLOCK_SECOND /* clock ticks */
+#define SEND_INTERVAL CLOCK_SECOND * 4 /* clock ticks */
 #define ITERATIONS 100 /* messages */
 
 /* Start sending messages START_DELAY secs after we start so that routing can
@@ -147,7 +147,7 @@ PROCESS_THREAD(rpl_root_process, ev, data)
 
   PRINTF("Multicast Engine: '%s'\n", UIP_MCAST6.name);
 
-  NETSTACK_MAC.off(1);
+  //NETSTACK_MAC.off(1);
 
   set_own_addresses();
 

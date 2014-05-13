@@ -82,7 +82,7 @@ uip_mcast6_route_add(uip_ipaddr_t *group, uip_lladdr_t *subscriber)
   for(locmcastrt = list_head(mcast_route_list);
       locmcastrt != NULL;
       locmcastrt = list_item_next(locmcastrt)) {
-    if(uip_ipaddr_cmp(&locmcastrt->group, group) && memcmp(&locmcastrt->subscribed_child, subscriber, UIP_LLADDR_LEN)) {
+    if(uip_ipaddr_cmp(&locmcastrt->group, group) && !memcmp(&locmcastrt->subscribed_child, subscriber, UIP_LLADDR_LEN)) {
       // The entry already exists
       return locmcastrt;
     }
@@ -94,7 +94,6 @@ uip_mcast6_route_add(uip_ipaddr_t *group, uip_lladdr_t *subscriber)
   list_add(mcast_route_list, locmcastrt);
   uip_ipaddr_copy(&(locmcastrt->group), group);
   (*(&(locmcastrt->subscribed_child)) = *(subscriber)); // copy subscriber link layer address
-
   return locmcastrt;
 }
 #else
