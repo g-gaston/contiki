@@ -36,7 +36,7 @@
  *         It will only work in RPL networks in MOP 3 "Storing with Multicast"
  *
  * \author
- *         Guillermo Gastón
+ *         Guillermo Gastón Lorente
  */
 
 #include "contiki.h"
@@ -51,10 +51,6 @@
 #include "lib/list.h"
 #include <string.h>
 
-#define uip_lladdr_cmp(addr1, addr2) (memcmp(addr1, addr2, UIP_LLADDR_LEN) == 0)
-
-#define uip_partial_cmp(addr1, addr2, len) (memcmp(addr1, addr2, len) == 0)
-
 #define DEBUG DEBUG_NONE
 #include "net/ip/uip-debug.h"
 
@@ -67,6 +63,10 @@
 #define BMRF_FWD_DELAY()  NETSTACK_RDC.channel_check_interval()
 /* Number of slots in the next 500ms */
 #define BMRF_INTERVAL_COUNT  ((CLOCK_SECOND >> 2) / fwd_delay)
+/* uip_lladdr comparison */
+#define uip_lladdr_cmp(addr1, addr2) (memcmp(addr1, addr2, UIP_LLADDR_LEN) == 0)
+/* uip_ipaddr partial comparison */
+#define uip_partial_cmp(addr1, addr2, len) (memcmp(addr1, addr2, len) == 0)
 /*---------------------------------------------------------------------------*/
 /* Internal Data */
 /*---------------------------------------------------------------------------*/
@@ -132,16 +132,15 @@ mcast_fwd_with_broadcast(void)
          uip_len, fwd_delay, fwd_spread);
 }
 #endif /* BMRF_MODE */
+/*---------------------------------------------------------------------------*/
 static void
 mcast_fwd_with_unicast(void)
 {
   uip_mcast6_route_t *mcast_entries;
-  mcast_entries = NULL;
   for(mcast_entries = uip_mcast6_route_list_head();
       mcast_entries != NULL;
       mcast_entries = list_item_next(mcast_entries)) {
     if(uip_ipaddr_cmp(&mcast_entries->group, &UIP_IP_BUF->destipaddr)) {
-      //Send to this address &mcast_entries->subscribed_child
       tcpip_output(&mcast_entries->subscribed_child);
       PRINTF("BMRF: Forwarded with LL-unicast to ");
       PRINTLLADDR(&mcast_entries->subscribed_child);
@@ -150,26 +149,26 @@ mcast_fwd_with_unicast(void)
   }
   PRINTF("BMRF: Ended forwarding with LL-unicast\n");
 }
+/*---------------------------------------------------------------------------*/
 static void
 mcast_fwd_with_unicast_up_down(const uip_lladdr_t *preferred_parent)
 {
   uip_mcast6_route_t *mcast_entries;
   uip_lladdr_t sender;
-  mcast_entries = NULL;
   (sender = *((uip_lladdr_t *)packetbuf_addr(PACKETBUF_ADDR_SENDER)));
   for(mcast_entries = uip_mcast6_route_list_head();
       mcast_entries != NULL;
       mcast_entries = list_item_next(mcast_entries)) {
+    /* Only send if it is not the origin */
     if(uip_ipaddr_cmp(&mcast_entries->group, &UIP_IP_BUF->destipaddr)
       && !uip_lladdr_cmp(&mcast_entries->subscribed_child, &sender)) {
-      //Send to this address &mcast_entries->subscribed_child
       tcpip_output(&mcast_entries->subscribed_child);
       PRINTF("BMRF: Forwarded with LL-unicast to ");
       PRINTLLADDR(&mcast_entries->subscribed_child);
       PRINTF("\n");
     }
   }
-  //Send to our preferred parent address preferred_parent
+  /* If preferred_parent == NULL, we are the DODAG root */
   if(preferred_parent != NULL) {
     tcpip_output(preferred_parent);
     PRINTF("BMRF: Forwarded with LL-unicast up and down\n");
@@ -177,8 +176,8 @@ mcast_fwd_with_unicast_up_down(const uip_lladdr_t *preferred_parent)
     PRINTLLADDR(preferred_parent);
     PRINTF("\n");
   }
-
 }
+/*---------------------------------------------------------------------------*/
 static void
 mcast_fwd_down(void){
 #if BMRF_MODE == BMRF_UNICAST_MODE
@@ -188,7 +187,6 @@ mcast_fwd_down(void){
 #elif BMRF_MODE == BMRF_MIXED_MODE
   uip_mcast6_route_t *locmcastrt;
   uint8_t entries_number;
-  locmcastrt = NULL;
   entries_number = 0;
   for(locmcastrt = uip_mcast6_route_list_head();
       locmcastrt != NULL;
@@ -205,7 +203,7 @@ mcast_fwd_down(void){
 #endif /* BMRF_MODE */
 }
 /*---------------------------------------------------------------------------*/
-/* Dirty hack for searching a route for an ip from nbr table */
+/* Comparing uip_ipaddr without the first 16 prefix bits */
 uip_ds6_route_t *
 uip_ds6_route_lookup_from_nbr_ip(uip_ipaddr_t *addr)
 {
@@ -251,6 +249,13 @@ in()
     return UIP_MCAST6_DROP;
   }
 
+  if(UIP_IP_BUF->ttl <= 1) {
+    PRINTF("BMRF: Dropped beacause ttl=0\n");
+    UIP_MCAST6_STATS_ADD(mcast_dropped);
+    return UIP_MCAST6_DROP;
+  }
+
+  /* We are not the root */
   if(d->rank != ROOT_RANK(default_instance)) {
     /* Retrieve our preferred parent's LL address */
     aux_ipaddr = rpl_get_parent_ipaddr(d->preferred_parent);
@@ -268,12 +273,6 @@ in()
 
   if(parent_lladdr == NULL) {
     PRINTF("BMRF: Dropped, no preferred parent\n");
-    UIP_MCAST6_STATS_ADD(mcast_dropped);
-    return UIP_MCAST6_DROP;
-  }
-
-  if(UIP_IP_BUF->ttl <= 1) {
-    PRINTF("BMRF: Dropped beacause ttl=0\n");
     UIP_MCAST6_STATS_ADD(mcast_dropped);
     return UIP_MCAST6_DROP;
   }
@@ -355,7 +354,7 @@ out()
 
     if(parent_lladdr != NULL) {
       //Send to our preferred parent LL-address
-      PRINTF("BMRF: Send we are the seed because to our preferred parent with address: ");
+      PRINTF("BMRF: Seed, send to our preferred parent with address: ");
       PRINTLLADDR(parent_lladdr);
       PRINTF("\n");
       tcpip_output(parent_lladdr);

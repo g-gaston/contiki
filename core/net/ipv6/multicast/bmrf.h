@@ -34,7 +34,7 @@
  *         Header file for 'Bidirectional Multicast RPL Forwarding' (BMRF)
  *
  * \author
- *         Guillermo Gastón
+ *         Guillermo Gastón Lorente
  */
 
 #ifndef BMRF_H_
