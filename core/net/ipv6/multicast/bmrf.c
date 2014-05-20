@@ -232,7 +232,7 @@ static uint8_t
 in()
 {
   rpl_dag_t *d;                       /* Our DODAG */
-  uip_ipaddr_t *parent_ipaddr;        /* Our pref. parent's IPv6 address */
+  uip_ipaddr_t *aux_ipaddr;
   const uip_lladdr_t *parent_lladdr;  /* Our pref. parent's LL address */
 
   /*
@@ -253,8 +253,8 @@ in()
 
   if(d->rank != ROOT_RANK(default_instance)) {
     /* Retrieve our preferred parent's LL address */
-    parent_ipaddr = rpl_get_parent_ipaddr(d->preferred_parent);
-    parent_lladdr = uip_ds6_nbr_lladdr_from_ipaddr(parent_ipaddr);
+    aux_ipaddr = rpl_get_parent_ipaddr(d->preferred_parent);
+    parent_lladdr = uip_ds6_nbr_lladdr_from_ipaddr(aux_ipaddr);
   } else {
     parent_lladdr = NULL;
     if(uip_lladdr_cmp(packetbuf_addr(PACKETBUF_ADDR_RECEIVER),&linkaddr_null)) {
@@ -302,14 +302,13 @@ in()
       PRINTF("BMRF: No entries for this group\n");
     }
   } else {
-    packet_from_bellow: ;
-    uip_ipaddr_t *ll_sender_ip_address;
-    ll_sender_ip_address = uip_ds6_nbr_ipaddr_from_lladdr((uip_lladdr_t *)packetbuf_addr(PACKETBUF_ADDR_SENDER));
+    packet_from_bellow:
+    aux_ipaddr = uip_ds6_nbr_ipaddr_from_lladdr((uip_lladdr_t *)packetbuf_addr(PACKETBUF_ADDR_SENDER));
     PRINTF("BMRF: Should be a packet from bellow. ll_src: ");
     PRINTLLADDR((uip_lladdr_t *)packetbuf_addr(PACKETBUF_ADDR_SENDER));
     PRINTF("\n");
     /* Unicast from below */
-    if (ll_sender_ip_address != NULL && uip_ds6_route_lookup_from_nbr_ip(ll_sender_ip_address) != NULL) {
+    if (aux_ipaddr != NULL && uip_ds6_route_lookup_from_nbr_ip(aux_ipaddr) != NULL) {
       /* If we enter here, we will definitely forward */
       UIP_MCAST6_STATS_ADD(mcast_fwd);
       mcast_fwd_with_unicast_up_down(parent_lladdr);
