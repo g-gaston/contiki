@@ -155,7 +155,8 @@ mcast_fwd_with_unicast_up_down(const uip_lladdr_t *preferred_parent)
 {
   uip_mcast6_route_t *mcast_entries;
   uip_lladdr_t sender;
-  (sender = *((uip_lladdr_t *)packetbuf_addr(PACKETBUF_ADDR_SENDER)));
+  //(sender = *((uip_lladdr_t *)packetbuf_addr(PACKETBUF_ADDR_SENDER)));
+  memcpy(&sender, (uip_lladdr_t *)packetbuf_addr(PACKETBUF_ADDR_SENDER), UIP_LLADDR_LEN);
   for(mcast_entries = uip_mcast6_route_list_head();
       mcast_entries != NULL;
       mcast_entries = list_item_next(mcast_entries)) {
