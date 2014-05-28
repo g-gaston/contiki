@@ -251,7 +251,7 @@ in()
   }
 
   if(UIP_IP_BUF->ttl <= 1) {
-    PRINTF("BMRF: Dropped beacause ttl=0\n");
+    PRINTF("BMRF: Dropped because ttl=0\n");
     UIP_MCAST6_STATS_ADD(mcast_dropped);
     return UIP_MCAST6_DROP;
   }
