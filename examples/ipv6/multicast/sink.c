@@ -45,6 +45,7 @@
 #include "contiki-net.h"
 #include "net/ipv6/multicast/uip-mcast6.h"
 #include "dev/button-sensor.h"
+#include "dev/leds.h"
 
 #include <string.h>
 
@@ -72,6 +73,7 @@ tcpip_handler(void)
 {
   if(uip_newdata()) {
     count++;
+    leds_invert(LEDS_BLUE);
     PRINTF("In: sequence-msg [%lu], TTL %u, total %u , from: ",
         uip_ntohl((unsigned long) *((uint32_t *)(uip_appdata))),
         UIP_IP_BUF->ttl, count);
@@ -102,19 +104,11 @@ join_mcast_group(void)
    * (M=1, DAC=0), with 32 inline bits (1E 89 AB CD)
    */
   uip_ip6addr(&addr, 0xFF1E,0,0,0,0,0,0x89,0xABCD);
-  rv = uip_ds6_maddr_lookup(&addr);
+  rv = uip_ds6_maddr_add(&addr);
   if(rv) {
-    rv->isused = 1;
     PRINTF("Joined multicast group ");
     PRINT6ADDR(&uip_ds6_maddr_lookup(&addr)->ipaddr);
     PRINTF("\n");
-  } else {
-    rv = uip_ds6_maddr_add(&addr);
-    if(rv) {
-      PRINTF("Joined multicast group ");
-      PRINT6ADDR(&uip_ds6_maddr_lookup(&addr)->ipaddr);
-      PRINTF("\n");
-    }
   }
   return rv;
 }
@@ -142,6 +136,10 @@ PROCESS_THREAD(mcast_sink_process, ev, data)
     PRINTF("Failed to join multicast group\n");
     PROCESS_EXIT();
   }
+
+  leds_off(LEDS_ALL);
+  leds_on(LEDS_GREEN);
+
   subscribed = 1;
 
   count = 0;
@@ -162,12 +160,16 @@ PROCESS_THREAD(mcast_sink_process, ev, data)
       if(subscribed == 1) {
         unjoin_mcast_group();
         subscribed = 0;
+        leds_off(LEDS_GREEN);
+        leds_on(LEDS_RED);
       } else {
         if(join_mcast_group() == NULL) {
           PRINTF("Failed to join multicast group\n");
           PROCESS_EXIT();
         }
         subscribed = 1;
+        leds_off(LEDS_RED);
+        leds_on(LEDS_GREEN);
       }
     }
   }
