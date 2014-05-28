@@ -309,7 +309,7 @@ rpl_of_t *rpl_find_of(rpl_ocp_t);
 void rpl_schedule_dao(rpl_instance_t *);
 void rpl_schedule_dao_immediately(rpl_instance_t *);
 void rpl_cancel_dao(rpl_instance_t *instance);
-#if IP_MCAST6_ENGINE == UIP_MCAST6_ENGINE_BMRF
+#if UIP_MCAST6_ENGINE == UIP_MCAST6_ENGINE_BMRF
 void rpl_schedule_dao_immediately_default_instance(void);
 #endif
 
