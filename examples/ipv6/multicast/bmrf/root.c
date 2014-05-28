@@ -52,8 +52,8 @@
 
 #define MAX_PAYLOAD_LEN 120
 #define MCAST_SINK_UDP_PORT 3001 /* Host byte order */
-#define SEND_INTERVAL CLOCK_SECOND /* clock ticks */
-#define ITERATIONS 100 /* messages */
+#define SEND_INTERVAL CLOCK_SECOND * 4 /* clock ticks */
+#define ITERATIONS 0 /* messages */
 
 /* Start sending messages START_DELAY secs after we start so that routing can
  * converge */

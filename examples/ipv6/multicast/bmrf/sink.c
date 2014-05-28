@@ -31,9 +31,10 @@
 
 /**
  * \file
- *         This node is part of the RPL multicast example. It is an RPL root
- *         and sends a multicast message periodically. For the example to work,
- *         we need one of those nodes.
+ *         This node is part of the RPL multicast example. It is a node that
+ *         joins a multicast group and listens for messages. It also knows how
+ *         to forward messages down the tree.
+ *         For the example to work, we need one or more of those nodes.
  *
  * \author
  *         George Oikonomou - <oikonomou@users.sourceforge.net>
@@ -43,125 +44,132 @@
 #include "contiki-lib.h"
 #include "contiki-net.h"
 #include "net/ipv6/multicast/uip-mcast6.h"
+#include "dev/button-sensor.h"
+#include "dev/leds.h"
 
 #include <string.h>
 
 #define DEBUG DEBUG_PRINT
 #include "net/ip/uip-debug.h"
-#include "net/rpl/rpl.h"
 
-#define MAX_PAYLOAD_LEN 120
 #define MCAST_SINK_UDP_PORT 3001 /* Host byte order */
-#define SEND_INTERVAL CLOCK_SECOND /* clock ticks */
-#define ITERATIONS 100 /* messages */
 
-/* Start sending messages START_DELAY secs after we start so that routing can
- * converge */
-#define START_DELAY 60
+static struct uip_udp_conn *sink_conn;
+static uint16_t count;
+static uint8_t subscribed;
 
-static struct uip_udp_conn * mcast_conn;
-static char buf[MAX_PAYLOAD_LEN];
-static uint32_t seq_id;
+#define UIP_IP_BUF   ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
 
 #if !UIP_CONF_IPV6 || !UIP_CONF_ROUTER || !UIP_CONF_IPV6_MULTICAST || !UIP_CONF_IPV6_RPL
 #error "This example can not work with the current contiki configuration"
 #error "Check the values of: UIP_CONF_IPV6, UIP_CONF_ROUTER, UIP_CONF_IPV6_RPL"
 #endif
 /*---------------------------------------------------------------------------*/
-PROCESS(rpl_root_process, "RPL ROOT, Multicast Sender");
-AUTOSTART_PROCESSES(&rpl_root_process);
+PROCESS(mcast_sink_process, "Multicast Sink");
+AUTOSTART_PROCESSES(&mcast_sink_process);
 /*---------------------------------------------------------------------------*/
 static void
-multicast_send(void)
+tcpip_handler(void)
 {
-  uint32_t id;
-
-  id = uip_htonl(seq_id);
-  memset(buf, 0, MAX_PAYLOAD_LEN);
-  memcpy(buf, &id, sizeof(seq_id));
-
-  PRINTF("Send to: ");
-  PRINT6ADDR(&mcast_conn->ripaddr);
-  PRINTF(" Remote Port %u,", uip_ntohs(mcast_conn->rport));
-  PRINTF(" (msg=0x%08lx)", (unsigned long)uip_ntohl(*((uint32_t *)buf)));
-  PRINTF(" %lu bytes\n", (unsigned long)sizeof(id));
-
-  seq_id++;
-  uip_udp_packet_send(mcast_conn, buf, sizeof(id));
+  if(uip_newdata()) {
+    count++;
+    leds_invert(LEDS_BLUE);
+    PRINTF("In: sequence-msg [%lu], TTL %u, total %u , from: ",
+        uip_ntohl((unsigned long) *((uint32_t *)(uip_appdata))),
+        UIP_IP_BUF->ttl, count);
+    PRINT6ADDR(&UIP_IP_BUF->srcipaddr);
+    PRINTF("\n");
+  }
+  return;
 }
 /*---------------------------------------------------------------------------*/
 static void
-prepare_mcast(void)
+set_own_ip_address(void){
+  uip_ipaddr_t addr;
+
+  /* First, set our v6 global */
+  uip_ip6addr(&addr, 0xaaaa, 0, 0, 0, 0, 0, 0, 0);
+  uip_ds6_set_addr_iid(&addr, &uip_lladdr);
+  uip_ds6_addr_add(&addr, 0, ADDR_AUTOCONF);
+}
+/*---------------------------------------------------------------------------*/
+static uip_ds6_maddr_t *
+join_mcast_group(void)
 {
-  uip_ipaddr_t ipaddr;
+  uip_ipaddr_t addr;
+  uip_ds6_maddr_t *rv;
 
   /*
    * IPHC will use stateless multicast compression for this destination
    * (M=1, DAC=0), with 32 inline bits (1E 89 AB CD)
    */
-  uip_ip6addr(&ipaddr, 0xFF1E,0,0,0,0,0,0x89,0xABCD);
-  mcast_conn = udp_new(&ipaddr, UIP_HTONS(MCAST_SINK_UDP_PORT), NULL);
+  uip_ip6addr(&addr, 0xFF1E,0,0,0,0,0,0x89,0xABCD);
+  rv = uip_ds6_maddr_add(&addr);
+  if(rv) {
+    PRINTF("Joined multicast group ");
+    PRINT6ADDR(&uip_ds6_maddr_lookup(&addr)->ipaddr);
+    PRINTF("\n");
+  }
+  return rv;
 }
 /*---------------------------------------------------------------------------*/
 static void
-set_own_addresses(void)
-{
-  int i;
-  uint8_t state;
-  rpl_dag_t *dag;
-  uip_ipaddr_t ipaddr;
-
-  uip_ip6addr(&ipaddr, 0xaaaa, 0, 0, 0, 0, 0, 0, 0);
-  uip_ds6_set_addr_iid(&ipaddr, &uip_lladdr);
-  uip_ds6_addr_add(&ipaddr, 0, ADDR_AUTOCONF);
-
-  PRINTF("Our IPv6 addresses:\n");
-  for(i = 0; i < UIP_DS6_ADDR_NB; i++) {
-    state = uip_ds6_if.addr_list[i].state;
-    if(uip_ds6_if.addr_list[i].isused && (state == ADDR_TENTATIVE || state
-        == ADDR_PREFERRED)) {
-      PRINTF("  ");
-      PRINT6ADDR(&uip_ds6_if.addr_list[i].ipaddr);
-      PRINTF("\n");
-      if(state == ADDR_TENTATIVE) {
-        uip_ds6_if.addr_list[i].state = ADDR_PREFERRED;
-      }
-    }
-  }
-
-  /* Become root of a new DODAG with ID our global v6 address */
-  dag = rpl_set_root(RPL_DEFAULT_INSTANCE, &ipaddr);
-  if(dag != NULL) {
-    rpl_set_prefix(dag, &ipaddr, 64);
-    PRINTF("Created a new RPL dag with ID: ");
-    PRINT6ADDR(&dag->dag_id);
-    PRINTF("\n");
-  }
+unjoin_mcast_group(void){
+  uip_ipaddr_t addr;
+  uip_ds6_maddr_t *mcast_addrs;
+  uip_ip6addr(&addr, 0xFF1E,0,0,0,0,0,0x89,0xABCD);
+  mcast_addrs = uip_ds6_maddr_lookup(&addr);
+  uip_ds6_maddr_rm(mcast_addrs);
+  PRINTF("Unsubscribing from multicast group\n");
 }
 /*---------------------------------------------------------------------------*/
-PROCESS_THREAD(rpl_root_process, ev, data)
+PROCESS_THREAD(mcast_sink_process, ev, data)
 {
-  static struct etimer et;
-
   PROCESS_BEGIN();
+  SENSORS_ACTIVATE(button_sensor);
 
   PRINTF("Multicast Engine: '%s'\n", UIP_MCAST6.name);
 
-  NETSTACK_MAC.off(1);
+  set_own_ip_address();
 
-  set_own_addresses();
+  if(join_mcast_group() == NULL) {
+    PRINTF("Failed to join multicast group\n");
+    PROCESS_EXIT();
+  }
 
-  prepare_mcast();
+  leds_off(LEDS_ALL);
+  leds_on(LEDS_GREEN);
 
-  etimer_set(&et, START_DELAY * CLOCK_SECOND);
+  subscribed = 1;
+
+  count = 0;
+
+  sink_conn = udp_new(NULL, UIP_HTONS(0), NULL);
+  udp_bind(sink_conn, UIP_HTONS(MCAST_SINK_UDP_PORT));
+
+  PRINTF("Listening: ");
+  PRINT6ADDR(&sink_conn->ripaddr);
+  PRINTF(" local/remote port %u/%u\n",
+        UIP_HTONS(sink_conn->lport), UIP_HTONS(sink_conn->rport));
+
   while(1) {
     PROCESS_YIELD();
-    if(etimer_expired(&et)) {
-      if(seq_id == ITERATIONS) {
-        etimer_stop(&et);
+    if(ev == tcpip_event) {
+      tcpip_handler();
+    } else if(ev == sensors_event && data == &button_sensor) {
+      if(subscribed == 1) {
+        unjoin_mcast_group();
+        subscribed = 0;
+        leds_off(LEDS_GREEN);
+        leds_on(LEDS_RED);
       } else {
-        multicast_send();
-        etimer_set(&et, SEND_INTERVAL);
+        if(join_mcast_group() == NULL) {
+          PRINTF("Failed to join multicast group\n");
+          PROCESS_EXIT();
+        }
+        subscribed = 1;
+        leds_off(LEDS_RED);
+        leds_on(LEDS_GREEN);
       }
     }
   }
