@@ -75,6 +75,7 @@ static struct bmrf_stats stats;
 #define BMRF_STATS_ADD(x) stats.x++
 #define BMRF_STATS_INIT() do { memset(&stats, 0, sizeof(stats)); } while(0)
 #else /* UIP_MCAST6_STATS */
+#define BMRF_STATS_ADD(x)
 #define BMRF_STATS_INIT()
 #endif
 /*---------------------------------------------------------------------------*/
