@@ -68,6 +68,16 @@
 /* uip_ipaddr partial comparison */
 #define uip_partial_cmp(addr1, addr2, len) (memcmp(addr1, addr2, len) == 0)
 /*---------------------------------------------------------------------------*/
+/* Maintain Stats */
+/*---------------------------------------------------------------------------*/
+#if UIP_MCAST6_STATS
+static struct bmrf_stats stats;
+#define BMRF_STATS_ADD(x) stats.x++
+#define BMRF_STATS_INIT() do { memset(&stats, 0, sizeof(stats)); } while(0)
+#else /* UIP_MCAST6_STATS */
+#define BMRF_STATS_INIT()
+#endif
+/*---------------------------------------------------------------------------*/
 /* Internal Data */
 /*---------------------------------------------------------------------------*/
 static struct ctimer mcast_periodic;
@@ -182,8 +192,10 @@ mcast_fwd_with_unicast_up_down(const uip_lladdr_t *preferred_parent)
 static void
 mcast_fwd_down(void){
 #if BMRF_MODE == BMRF_UNICAST_MODE
+  BMRF_STATS_ADD(bmrf_fwd_uncst);
   mcast_fwd_with_unicast();
 #elif BMRF_MODE == BMRF_BROADCAST_MODE
+  BMRF_STATS_ADD(bmrf_fwd_brdcst);
   mcast_fwd_with_broadcast();
 #elif BMRF_MODE == BMRF_MIXED_MODE
   uip_mcast6_route_t *locmcastrt;
@@ -197,8 +209,10 @@ mcast_fwd_down(void){
     }
   }
   if(entries_number > BMRF_BROADCAST_THRESHOLD) {
+    BMRF_STATS_ADD(bmrf_fwd_brdcst);
     mcast_fwd_with_broadcast();
   } else {
+    BMRF_STATS_ADD(bmrf_fwd_uncst);
     mcast_fwd_with_unicast();
   }
 #endif /* BMRF_MODE */
@@ -311,6 +325,7 @@ in()
     if (aux_ipaddr != NULL && uip_ds6_route_lookup_from_nbr_ip(aux_ipaddr) != NULL) {
       /* If we enter here, we will definitely forward */
       UIP_MCAST6_STATS_ADD(mcast_fwd);
+      BMRF_STATS_ADD(bmrf_fwd_uncst);
       mcast_fwd_with_unicast_up_down(parent_lladdr);
     } else {
       PRINTF("BMRF: Not a packet from bellow, drop\n");
@@ -337,7 +352,8 @@ in()
 static void
 init()
 {
-  UIP_MCAST6_STATS_INIT(NULL);
+  BMRF_STATS_INIT();
+  UIP_MCAST6_STATS_INIT(&stats);
 
   uip_mcast6_route_init();
 }

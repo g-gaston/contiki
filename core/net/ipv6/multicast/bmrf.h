@@ -81,6 +81,14 @@
 #define BMRF_MAX_SPREAD 4
 #endif
 
+/*---------------------------------------------------------------------------*/
+/* Stats datatype */
+/*---------------------------------------------------------------------------*/
+struct bmrf_stats{
+  UIP_MCAST6_STATS_DATATYPE bmrf_fwd_brdcst; /* Forwarded by us with LL Broadcast*/
+  UIP_MCAST6_STATS_DATATYPE bmrf_fwd_uncst;  /* Forwarded by us with LL Unicast*/
+};
+
 #endif /* BMRF_CONF_MODE */
 
 #endif /* BMRF_H_ */
