@@ -9,8 +9,19 @@ The firmware built with this example communicates with a host PC using
 
 How to Use
 ==========
-Build this example for your hardware and upload it to your device.
-On your PC, follow the instructions in the sensniff page.
+
+1. Compile and upload the program to the mote (possibles targets: cc2530dk, sensinode, z1):
+    `make sniffer.upload`
+
+2. Run the pyhton script (select proper usb) (https://github.com/g-oikonomou/sensniff):
+    `python sensniff.py -d /dev/ttyUSBX`
+
+3. Run Wireshark
+
+4. Select the pipe in Wireshark
+    Capture -> options -> Manage Interfaces -> New (under Pipes) -> type /tmp/sensniff and Save.
+
+(The first time your run this, you will need to open Wireshark's preferences and select 'TI CC24xx FCS format' under Protocols -> IEEE 802.15.4.)
 
 Platforms
 =========
@@ -24,6 +35,7 @@ be undertaken:
 The following RF drivers are known to work:
  * cc2530
  * cc2430
+ * cc2420
 
 There may be other ones working but not listed here.
 
