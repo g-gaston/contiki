@@ -102,6 +102,20 @@ void sniffer_arch_init(void);
 void sniffer_arch_set_input(int (* input)(unsigned char c));
 
 /**
+ * \brief Output a byte over a platform-specified peripheral
+ * \param data pointer to a byte
+ *
+ * This is that function used by the sniffer to output single bytes.
+ * This could for example be done over UART or USB.
+ */
+void sniffer_arch_write_byte(uint8_t data);
+
+/**
+ * \brief Flush the output over a platform-specified peripheral
+ */
+void sniffer_arch_flush_ouput(void);
+
+/**
  * \brief Output a frame over a platform-specified peripheral
  * \param frame a pointer to a buffer holding the frame
  * \param len The frame length

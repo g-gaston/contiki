@@ -52,6 +52,18 @@ sniffer_arch_set_input(int (* input)(unsigned char c))
 #endif
 /*---------------------------------------------------------------------------*/
 void
+sniffer_arch_write_byte(uint8_t data)
+{
+  io_arch_writeb(data);
+}
+/*---------------------------------------------------------------------------*/
+void
+sniffer_arch_flush_ouput(void)
+{
+  io_arch_flush();
+}
+/*---------------------------------------------------------------------------*/
+void
 sniffer_arch_output_frame(uint8_t *frame, uint8_t len)
 {
   uint8_t i;
@@ -71,7 +83,7 @@ sniffer_arch_rf_get_channel(void)
 uint8_t
 sniffer_arch_rf_set_channel(uint8_t channel)
 {
-  if((channel > 11) && (channel < 26)) {
+  if((channel >= 11) && (channel <= 26)) {
     cc2530_rf_channel_set(channel);
   }
   return cc2530_rf_channel_get();
