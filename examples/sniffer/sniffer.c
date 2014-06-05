@@ -43,7 +43,7 @@
 #include "sniffer.h"
 
 #define DEBUG DEBUG_NONE
-#include "net/uip-debug.h"
+#include "net/ip/uip-debug.h"
 #include "debug.h"
 #include <string.h>
 #include <stdint.h>

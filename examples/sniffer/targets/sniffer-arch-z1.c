@@ -33,8 +33,8 @@
  *     Guillermo Gastón
  */
 #include "contiki-conf.h"
-#include "dev/uart0.h"
-#include "dev/cc2420.h"
+#include "cpu/msp430/dev/uart0.h"
+#include "dev/cc2420/cc2420.h"
 #include "netstack.h"
 #include "sniffer.h"
 
