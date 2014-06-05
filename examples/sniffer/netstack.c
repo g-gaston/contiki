@@ -25,28 +25,25 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
- * This file is part of the Contiki operating system.
  */
-
 /**
  * \file
- *         Project specific configuration defines for the sniffer example.
- *
- *         We make sure that the radio driver outputs all packets in hexdump
- *         format.
+ *         Stub file overriding core/net/netstack.c. What we want to achieve
+ *         here is, when calling netstack_init from main, only the Radio and RDC
+ *         layers are initialised. MAC and network layers are excluded.
+ *         Provided the code does not explicitly reference those two layers
+ *         somewhere else, they will not get linked in, reducing code footprint
+ *         as well.
  *
  * \author
  *         George Oikonomou - <oikonomou@users.sourceforge.net>
  */
-
-#ifndef PROJECT_CONF_H_
-#define PROJECT_CONF_H_
-
-#define CC2430_RF_CONF_HEXDUMP 1
-#define CC2430_RF_CONF_AUTOACK 0
-#define NETSTACK_CONF_RDC      stub_rdc_driver
-#define ADC_SENSOR_CONF_ON     0
-#define LPM_CONF_MODE          0
-
-#endif /* PROJECT_CONF_H_ */
+#include "netstack.h"
+/*---------------------------------------------------------------------------*/
+void
+netstack_init(void)
+{
+  NETSTACK_RADIO.init();
+  NETSTACK_RDC.init();
+}
+/*---------------------------------------------------------------------------*/

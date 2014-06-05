@@ -91,11 +91,6 @@
 /* 192 ms, radio off -> on interval */
 #define ONOFF_TIME                    ((RTIMER_ARCH_SECOND / 3125) + 4)
 
-#if CC2430_RF_CONF_HEXDUMP
-#include "uart1.h"
-static const uint8_t magic[] = { 0x53, 0x6E, 0x69, 0x66 }; /* Snif */
-#endif
-
 #ifdef HAVE_RF_ERROR
 uint8_t rf_error = 0;
 #endif
@@ -525,23 +520,11 @@ read(void *buf, unsigned short bufsize)
     return 0;
   }
 
-#if CC2430_RF_CONF_HEXDUMP
-  /* If we reach here, chances are the FIFO is holding a valid frame */
-  uart1_writeb(magic[0]);
-  uart1_writeb(magic[1]);
-  uart1_writeb(magic[2]);
-  uart1_writeb(magic[3]);
-  uart1_writeb(len);
-#endif
-
   PRINTF("cc2430_rf: read = ");
   PRINTF("(%d)", len);
   len -= CHECKSUM_LEN;
   for(i = 0; i < len; ++i) {
     ((unsigned char *)(buf))[i] = RFD;
-#if CC2430_RF_CONF_HEXDUMP
-    uart1_writeb(((unsigned char *)(buf))[i]);
-#endif
     PRINTF("%02X", ((unsigned char *)(buf))[i]);
   }
   PRINTF("\n");
@@ -555,11 +538,6 @@ read(void *buf, unsigned short bufsize)
   /* Read the RSSI and CRC/Corr bytes */
   rssi = ((int8_t) RFD) - 45;
   crc_corr = RFD;
-
-#if CC2430_RF_CONF_HEXDUMP
-  uart1_writeb(rssi);
-  uart1_writeb(crc_corr);
-#endif
 
   /* MS bit CRC OK/Not OK, 7 LS Bits, Correlation value */
   if(crc_corr & CRC_BIT_MASK) {

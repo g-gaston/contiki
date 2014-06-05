@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Loughborough University - Computer Science
+ * Copyright (c) 2013, George Oikonomou - <oikonomou@users.sourceforge.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,23 +25,27 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
- * This file is part of the Contiki operating system.
  */
-
 /**
  * \file
- *         Definition of a fake RDC driver to be used with passive
- *         examples. The sniffer will never send packets and it will never
- *         push incoming packets up the stack. We do this by defining this
- *         driver as our RDC. We then drop everything
+ *         RDC driver for Sniffers. Instead of pushing captured frames upwards
+ *         in the network stack, it outputs them over a peripheral.
  *
  * \author
  *         George Oikonomou - <oikonomou@users.sourceforge.net>
  */
-
 #include "net/mac/mac.h"
 #include "net/mac/rdc.h"
+#include "net/packetbuf.h"
+#include "sniffer.h"
+
+#include <stdint.h>
+#include <string.h>
+/*---------------------------------------------------------------------------*/
+#define SNIFFER_DATA_LEN_MAX        128
+#define CRC_OK                     0x80
+
+static uint8_t frame_buff[SNIFFER_DATA_LEN_MAX];
 /*---------------------------------------------------------------------------*/
 static void
 send(mac_callback_t sent, void *ptr)
@@ -62,6 +66,34 @@ send_list(mac_callback_t sent, void *ptr, struct rdc_buf_list *list)
 static void
 input(void)
 {
+  uint8_t len = (uint8_t)packetbuf_datalen();
+
+  /*
+   * Copy the frame from packetbuf to our TX buffer. This will be the layer 2
+   * header + payload but not the FCS
+   */
+  memcpy(frame_buff, (uint8_t *)packetbuf_dataptr(), len);
+
+  /*
+   * Append the FCS:
+   * - RSSI is in packetbuf
+   * - LQI is there too but we need to OR the byte with 0x80 (CRC OK).
+   *
+   * CRC is definitely OK, otherwise the RF driver would not have delivered
+   * the frame to us
+   */
+  frame_buff[len] = ((uint8_t)packetbuf_attr(PACKETBUF_ATTR_RSSI));
+  len++;
+
+  frame_buff[len] = ((uint8_t)(packetbuf_attr(PACKETBUF_ATTR_LINK_QUALITY)
+                     | CRC_OK));
+  len++;
+
+#if SNIFFER_SENSNIFF_SUPPORT
+  sniffer_send_command(SNIFFER_CMD_FRAME, len, frame_buff);
+#else
+  sniffer_arch_output_frame(frame_buff, len);
+#endif
 }
 /*---------------------------------------------------------------------------*/
 static int
@@ -85,10 +117,11 @@ cca(void)
 static void
 init(void)
 {
+  return;
 }
 /*---------------------------------------------------------------------------*/
-const struct rdc_driver stub_rdc_driver = {
-  "stub-rdc",
+const struct rdc_driver sniffer_rdc_driver = {
+  "sniffer-rdc",
   init,
   send,
   send_list,
