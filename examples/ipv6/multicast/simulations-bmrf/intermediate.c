@@ -55,6 +55,14 @@
 #error "This example can not work with the current contiki configuration"
 #error "Check the values of: UIP_CONF_IPV6, UIP_CONF_ROUTER, UIP_CONF_IPV6_RPL"
 #endif
+
+
+#if defined(MCAST_CONF_SEND_INTERVAL) && defined(MCAST_CONF_MESSAGES) && defined(MCAST_CONF_START_DELAY)
+#define WAIT_FOR_END ((MCAST_CONF_SEND_INTERVAL * MCAST_CONF_MESSAGES) + MCAST_CONF_START_DELAY + 50)
+#else
+#define WAIT_FOR_END 160 + 50
+#endif
+
 /*---------------------------------------------------------------------------*/
 PROCESS(mcast_intermediate_process, "Intermediate Process");
 AUTOSTART_PROCESSES(&mcast_intermediate_process);
@@ -65,20 +73,23 @@ PROCESS_THREAD(mcast_intermediate_process, ev, data)
 
   PROCESS_BEGIN();
 
+  etimer_set(&et, WAIT_FOR_END * CLOCK_SECOND);
+  printf("WAIT_FOR_END: %u\n", WAIT_FOR_END);
 
-  etimer_set(&et, 300 * CLOCK_SECOND);
 
   while(1) {
     PROCESS_YIELD();
     if(etimer_expired(&et)) {
-      PRINTF("%u; %lu; %lu; %lu; %lu; %lu;\n",
+      PRINTF("%u; %lu; %lu; %lu; %lu; %lu; %lu;\n",
         0,
         SIMSTATS_GET(lltx),
+        SIMSTATS_GET(pkttx),
         energest_type_time(ENERGEST_TYPE_LISTEN),
         energest_type_time(ENERGEST_TYPE_TRANSMIT),
         energest_type_time(ENERGEST_TYPE_LPM),
         energest_type_time(ENERGEST_TYPE_CPU));
-      	break;
+      etimer_stop(&et);
+      break;
     }
   }
 

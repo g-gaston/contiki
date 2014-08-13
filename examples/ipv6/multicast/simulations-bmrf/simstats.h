@@ -42,6 +42,7 @@
 
 struct simstats {
   unsigned long lltx;
+  unsigned long pkttx;
 };
 
 #if SIMSTATS_CONF_ENABLED

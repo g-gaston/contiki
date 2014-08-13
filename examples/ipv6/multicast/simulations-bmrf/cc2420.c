@@ -610,6 +610,7 @@ cc2420_prepare(const void *payload, unsigned short payload_len)
   PRINTF("cc2420: sending %d bytes\n", payload_len);
 
   RIMESTATS_ADD(lltx);
+  SIMSTATS_ADD(pkttx);
 
   /* Wait for any previous transmission to finish. */
   /*  while(status() & BV(CC2420_TX_ACTIVE));*/
