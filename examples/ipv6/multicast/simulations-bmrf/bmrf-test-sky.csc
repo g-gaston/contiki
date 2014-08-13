@@ -796,7 +796,7 @@
   <plugin>
     org.contikios.cooja.plugins.ScriptRunner
     <plugin_config>
-      <script>TIMEOUT(2000, timeout_func()); /* milliseconds. print last msg at timeout */&#xD;
+      <script>TIMEOUT(210000, timeout_func()); /* milliseconds. print last msg at timeout */&#xD;
 &#xD;
 timeout_func = function simulationEnd() {&#xD;
 	/* Extract PowerTracker statistics */&#xD;
