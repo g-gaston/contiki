@@ -58,7 +58,13 @@ static uint16_t count;
 
 #define UIP_IP_BUF   ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
 
-#define WAIT_END 70
+#define WAIT_END 50
+
+#ifdef MCAST_CONF_START_DELAY
+#define START_DELAY MCAST_CONF_START_DELAY
+#else
+#define START_DELAY 60
+#endif
 
 #if !UIP_CONF_IPV6 || !UIP_CONF_ROUTER || !UIP_CONF_IPV6_MULTICAST || !UIP_CONF_IPV6_RPL
 #error "This example can not work with the current contiki configuration"
@@ -109,10 +115,12 @@ join_mcast_group(void)
 PROCESS_THREAD(mcast_sink_process, ev, data)
 {
   static struct etimer et;
+  static struct etimer et_init;
 
   PROCESS_BEGIN();
 
   etimer_set(&et, WAIT_END * CLOCK_SECOND);
+  etimer_set(&et_init, START_DELAY * CLOCK_SECOND);
 
   PRINTF("Multicast Engine: '%s'\n", UIP_MCAST6.name);
 
@@ -136,14 +144,19 @@ PROCESS_THREAD(mcast_sink_process, ev, data)
     if(ev == tcpip_event) {
       tcpip_handler();
       etimer_restart(&et);
-    } else if(etimer_expired(&et)) {
-      PRINTF("%u; %lu; %lu; %lu; %lu; %lu;\n",
+    } else if(etimer_expired(&et) && etimer_expired(&et_init)) {
+      PRINTF("%u; %lu; %lu; %lu; %lu; %lu; %lu;\n",
         count,
         SIMSTATS_GET(lltx),
+        SIMSTATS_GET(pkttx),
         energest_type_time(ENERGEST_TYPE_LISTEN),
         energest_type_time(ENERGEST_TYPE_TRANSMIT),
         energest_type_time(ENERGEST_TYPE_LPM),
         energest_type_time(ENERGEST_TYPE_CPU));
+    } else if(etimer_expired(&et) && !etimer_expired(&et_init)){
+      etimer_restart(&et);
+    } else if(!etimer_expired(&et) && etimer_expired(&et_init)){
+      etimer_restart(&et);
     }
   }
 

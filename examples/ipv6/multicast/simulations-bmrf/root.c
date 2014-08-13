@@ -50,14 +50,29 @@
 #include "net/ip/uip-debug.h"
 #include "net/rpl/rpl.h"
 
+#include "simstats.h"
+
 #define MAX_PAYLOAD_LEN 120
 #define MCAST_SINK_UDP_PORT 3001 /* Host byte order */
-#define SEND_INTERVAL CLOCK_SECOND /* clock ticks */
-#define ITERATIONS 100 /* messages */
+
+#ifdef MCAST_CONF_SEND_INTERVAL
+#define SEND_INTERVAL MCAST_CONF_SEND_INTERVAL * CLOCK_SECOND /* clock ticks */
+#else
+#define SEND_INTERVAL CLOCK_SECOND
+#endif
+#ifdef MCAST_CONF_MESSAGES
+#define ITERATIONS MCAST_CONF_MESSAGES /* messages */
+#else
+#define ITERATIONS 10
+#endif
 
 /* Start sending messages START_DELAY secs after we start so that routing can
  * converge */
+#ifdef MCAST_CONF_START_DELAY
+#define START_DELAY MCAST_CONF_START_DELAY
+#else
 #define START_DELAY 60
+#endif
 
 static struct uip_udp_conn * mcast_conn;
 static char buf[MAX_PAYLOAD_LEN];
@@ -159,6 +174,14 @@ PROCESS_THREAD(rpl_root_process, ev, data)
     if(etimer_expired(&et)) {
       if(seq_id == ITERATIONS) {
         etimer_stop(&et);
+        PRINTF("%u; %lu; %lu; %lu; %lu; %lu; %lu;\n",
+          0,
+          SIMSTATS_GET(lltx),
+          SIMSTATS_GET(pkttx),
+          energest_type_time(ENERGEST_TYPE_LISTEN),
+          energest_type_time(ENERGEST_TYPE_TRANSMIT),
+          energest_type_time(ENERGEST_TYPE_LPM),
+          energest_type_time(ENERGEST_TYPE_CPU));
       } else {
         multicast_send();
         etimer_set(&et, SEND_INTERVAL);

@@ -767,7 +767,7 @@
       <viewport>4.281363444748867 0.0 0.0 4.281363444748867 66.11754622873235 18.210067893954534</viewport>
     </plugin_config>
     <width>578</width>
-    <z>0</z>
+    <z>4</z>
     <height>496</height>
     <location_x>1</location_x>
     <location_y>1</location_y>
@@ -775,29 +775,52 @@
   <plugin>
     org.contikios.cooja.plugins.LogListener
     <plugin_config>
-      <filter />
+      <filter>MAC</filter>
       <formatted_time />
       <coloring />
     </plugin_config>
     <width>975</width>
-    <z>1</z>
+    <z>3</z>
     <height>822</height>
     <location_x>400</location_x>
     <location_y>0</location_y>
   </plugin>
   <plugin>
-    org.contikios.cooja.plugins.RadioLogger
+    PowerTracker
+    <width>579</width>
+    <z>1</z>
+    <height>523</height>
+    <location_x>48</location_x>
+    <location_y>41</location_y>
+  </plugin>
+  <plugin>
+    org.contikios.cooja.plugins.ScriptRunner
     <plugin_config>
-      <split>150</split>
-      <formatted_time />
-      <showdups>false</showdups>
-      <hidenodests>false</hidenodests>
+      <script>TIMEOUT(2000, timeout_func()); /* milliseconds. print last msg at timeout */&#xD;
+&#xD;
+timeout_func = function simulationEnd() {&#xD;
+	/* Extract PowerTracker statistics */&#xD;
+	plugin = mote.getSimulation().getCooja().getStartedPlugin("PowerTracker");&#xD;
+	if (plugin != null) {&#xD;
+	stats = plugin.radioStatistics();&#xD;
+	splited_stats = stats.split(/\r\n|\n|\r/);&#xD;
+	log.log("PowerTracker: Extracted statistics:\n"&#xD;
+		+ splited_stats[0] + "\n"&#xD;
+		+ splited_stats[1] + "\n"&#xD;
+		+ splited_stats[2] + "\n"&#xD;
+		+ splited_stats[3] + "\n"&#xD;
+		);&#xD;
+	} else {&#xD;
+	log.log("No PowerTracker plugin\n");&#xD;
+	}&#xD;
+}</script>
+      <active>true</active>
     </plugin_config>
-    <width>500</width>
-    <z>3</z>
-    <height>300</height>
-    <location_x>-9</location_x>
-    <location_y>609</location_y>
+    <width>600</width>
+    <z>0</z>
+    <height>700</height>
+    <location_x>334</location_x>
+    <location_y>170</location_y>
   </plugin>
 </simconf>
 

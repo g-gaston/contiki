@@ -31,11 +31,10 @@
 
 /**
  * \file
- *         Project specific configuration defines for the RPl multicast
- *         example.
+ *         Project specific configuration defines for the RPl multicast simulations
  *
  * \author
- *         George Oikonomou - <oikonomou@users.sourceforge.net>
+ *         Guillermo Gastón
  */
 
 #ifndef PROJECT_CONF_H_
@@ -44,7 +43,7 @@
 #include "net/ipv6/multicast/uip-mcast6-engines.h"
 
 /* Change this to switch engines. Engine codes in uip-mcast6-engines.h */
-#define UIP_MCAST6_CONF_ENGINE UIP_MCAST6_ENGINE_SMRF
+#define UIP_MCAST6_CONF_ENGINE UIP_MCAST6_ENGINE_BMRF
 #define BMRF_CONF_MODE BMRF_MIXED_MODE
 #define BMRF_CONF_BROADCAST_THRESHOLD   2
 
@@ -70,5 +69,10 @@
 
 /* Enable simulation stats */
 #define SIMSTATS_CONF_ENABLED 1
+
+/* Simulation parameters */
+#define MCAST_CONF_MESSAGES 100
+#define MCAST_CONF_SEND_INTERVAL 1
+#define MCAST_CONF_START_DELAY 60
 
 #endif /* PROJECT_CONF_H_ */
