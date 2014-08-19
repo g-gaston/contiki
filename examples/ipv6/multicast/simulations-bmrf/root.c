@@ -101,6 +101,8 @@ multicast_send(void)
   PRINTF(" (msg=0x%08lx)", (unsigned long)uip_ntohl(*((uint32_t *)buf)));
   PRINTF(" %lu bytes\n", (unsigned long)sizeof(id));
 
+  PRINTF("Out:%lu\n", seq_id);
+
   seq_id++;
   uip_udp_packet_send(mcast_conn, buf, sizeof(id));
 }
