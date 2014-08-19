@@ -82,6 +82,8 @@ tcpip_handler(void)
     // PRINTF("In: [0x%08lx], TTL %u, total %u\n",
     //     uip_ntohl((unsigned long) *((uint32_t *)(uip_appdata))),
     //     UIP_IP_BUF->ttl, count);
+    PRINTF("In:%lu\n",
+      (unsigned long)uip_ntohl((unsigned long) *((uint32_t *)(uip_appdata))));
   }
   return;
 }

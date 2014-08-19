@@ -751,7 +751,7 @@
   <plugin>
     org.contikios.cooja.plugins.SimControl
     <width>280</width>
-    <z>2</z>
+    <z>0</z>
     <height>160</height>
     <location_x>34</location_x>
     <location_y>522</location_y>
@@ -775,20 +775,20 @@
   <plugin>
     org.contikios.cooja.plugins.LogListener
     <plugin_config>
-      <filter>MAC</filter>
+      <filter />
       <formatted_time />
       <coloring />
     </plugin_config>
     <width>975</width>
-    <z>3</z>
+    <z>2</z>
     <height>822</height>
-    <location_x>400</location_x>
-    <location_y>0</location_y>
+    <location_x>627</location_x>
+    <location_y>-3</location_y>
   </plugin>
   <plugin>
     PowerTracker
     <width>579</width>
-    <z>1</z>
+    <z>3</z>
     <height>523</height>
     <location_x>48</location_x>
     <location_y>41</location_y>
@@ -796,7 +796,11 @@
   <plugin>
     org.contikios.cooja.plugins.ScriptRunner
     <plugin_config>
-      <script>TIMEOUT(210000, timeout_func()); /* milliseconds. print last msg at timeout */&#xD;
+      <script>TIMEOUT(215000, timeout_func()); /* milliseconds. print last msg at timeout */&#xD;
+&#xD;
+outs = new Array(100);&#xD;
+total_time = 0;&#xD;
+total_ins = 0;&#xD;
 &#xD;
 timeout_func = function simulationEnd() {&#xD;
 	/* Extract PowerTracker statistics */&#xD;
@@ -813,14 +817,32 @@ timeout_func = function simulationEnd() {&#xD;
 	} else {&#xD;
 	log.log("No PowerTracker plugin\n");&#xD;
 	}&#xD;
+	log.log("Average end-to-end delay:" + (total_time/total_ins) +"\n");&#xD;
+}&#xD;
+&#xD;
+while(true){&#xD;
+	YIELD();&#xD;
+	time_msg = sim.getSimulationTimeMillis();&#xD;
+	message = msg.split(":");&#xD;
+    //log.log(""+message[0]+"\n");&#xD;
+	if (message.length == 2) {&#xD;
+		if (message[0]=="Out") {&#xD;
+			outs[parseInt(message[1])] = time_msg;&#xD;
+            log.log("New out time\n");&#xD;
+            log.log("outs["+parseInt(message[1])+"] = "+outs[parseInt(message[1])]+" = "+time_msg+"\n");&#xD;
+		} else if (message[0]=="In") {&#xD;
+			total_time = total_time + (outs[parseInt(message[1])] - time_msg);&#xD;
+			total_ins++;&#xD;
+		}&#xD;
+	};&#xD;
 }</script>
       <active>true</active>
     </plugin_config>
     <width>600</width>
-    <z>0</z>
+    <z>1</z>
     <height>700</height>
-    <location_x>334</location_x>
-    <location_y>170</location_y>
+    <location_x>401</location_x>
+    <location_y>111</location_y>
   </plugin>
 </simconf>
 
