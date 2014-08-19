@@ -751,7 +751,7 @@
   <plugin>
     org.contikios.cooja.plugins.SimControl
     <width>280</width>
-    <z>0</z>
+    <z>2</z>
     <height>160</height>
     <location_x>34</location_x>
     <location_y>522</location_y>
@@ -767,7 +767,7 @@
       <viewport>4.281363444748867 0.0 0.0 4.281363444748867 66.11754622873235 18.210067893954534</viewport>
     </plugin_config>
     <width>578</width>
-    <z>4</z>
+    <z>3</z>
     <height>496</height>
     <location_x>1</location_x>
     <location_y>1</location_y>
@@ -780,7 +780,7 @@
       <coloring />
     </plugin_config>
     <width>975</width>
-    <z>2</z>
+    <z>1</z>
     <height>822</height>
     <location_x>627</location_x>
     <location_y>-3</location_y>
@@ -788,7 +788,7 @@
   <plugin>
     PowerTracker
     <width>579</width>
-    <z>3</z>
+    <z>4</z>
     <height>523</height>
     <location_x>48</location_x>
     <location_y>41</location_y>
@@ -828,21 +828,22 @@ while(true){&#xD;
 	if (message.length == 2) {&#xD;
 		if (message[0]=="Out") {&#xD;
 			outs[parseInt(message[1])] = time_msg;&#xD;
-            log.log("New out time\n");&#xD;
-            log.log("outs["+parseInt(message[1])+"] = "+outs[parseInt(message[1])]+" = "+time_msg+"\n");&#xD;
+            //log.log("New out time\n");&#xD;
+            //log.log("outs["+parseInt(message[1])+"] = "+outs[parseInt(message[1])]+" = "+time_msg+"\n");&#xD;
 		} else if (message[0]=="In") {&#xD;
-			total_time = total_time + (outs[parseInt(message[1])] - time_msg);&#xD;
+			total_time = total_time + (time_msg - outs[parseInt(message[1])]);&#xD;
 			total_ins++;&#xD;
+            //log.log("Delay: "+time_msg+" + "+outs[parseInt(message[1])]+" = "+(time_msg - outs[parseInt(message[1])])+"\n");&#xD;
 		}&#xD;
 	};&#xD;
 }</script>
       <active>true</active>
     </plugin_config>
     <width>600</width>
-    <z>1</z>
+    <z>0</z>
     <height>700</height>
-    <location_x>401</location_x>
-    <location_y>111</location_y>
+    <location_x>478</location_x>
+    <location_y>96</location_y>
   </plugin>
 </simconf>
 
