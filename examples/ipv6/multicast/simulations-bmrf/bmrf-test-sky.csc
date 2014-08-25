@@ -751,7 +751,7 @@
   <plugin>
     org.contikios.cooja.plugins.SimControl
     <width>280</width>
-    <z>3</z>
+    <z>0</z>
     <height>160</height>
     <location_x>34</location_x>
     <location_y>522</location_y>
@@ -767,7 +767,7 @@
       <viewport>4.281363444748867 0.0 0.0 4.281363444748867 66.11754622873235 18.210067893954534</viewport>
     </plugin_config>
     <width>578</width>
-    <z>1</z>
+    <z>2</z>
     <height>496</height>
     <location_x>1</location_x>
     <location_y>1</location_y>
@@ -780,7 +780,7 @@
       <coloring />
     </plugin_config>
     <width>975</width>
-    <z>2</z>
+    <z>3</z>
     <height>822</height>
     <location_x>627</location_x>
     <location_y>-3</location_y>
@@ -798,7 +798,7 @@
     <plugin_config>
       <script>simulation_time = 225000;&#xD;
 &#xD;
-TIMEOUT(simulation_time, timeout_func()); /* milliseconds. print last msg at timeout */&#xD;
+TIMEOUT(225000, timeout_func()); /* milliseconds. print last msg at timeout */&#xD;
 &#xD;
 outs = new Array(100);&#xD;
 total_time = 0;&#xD;
@@ -878,7 +878,7 @@ while(true){&#xD;
       <active>true</active>
     </plugin_config>
     <width>600</width>
-    <z>0</z>
+    <z>1</z>
     <height>700</height>
     <location_x>410</location_x>
     <location_y>82</location_y>

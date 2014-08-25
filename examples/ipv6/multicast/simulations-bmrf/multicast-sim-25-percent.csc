@@ -854,7 +854,7 @@
     <plugin_config>
       <script>simulation_time = 225000;&#xD;
 &#xD;
-TIMEOUT(simulation_time, timeout_func()); /* milliseconds. print last msg at timeout */&#xD;
+TIMEOUT(225000, timeout_func()); /* milliseconds. print last msg at timeout */&#xD;
 &#xD;
 outs = new Array(100);&#xD;
 total_time = 0;&#xD;
