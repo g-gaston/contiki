@@ -80,8 +80,7 @@ PROCESS_THREAD(mcast_intermediate_process, ev, data)
   while(1) {
     PROCESS_YIELD();
     if(etimer_expired(&et)) {
-      PRINTF("%u; %lu; %lu; %lu; %lu; %lu; %lu;\n",
-        0,
+      PRINTF("n; %lu; %lu; %lu; %lu; %lu; %lu\n",
         SIMSTATS_GET(lltx),
         SIMSTATS_GET(pkttx),
         energest_type_time(ENERGEST_TYPE_LISTEN),
