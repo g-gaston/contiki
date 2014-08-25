@@ -101,7 +101,7 @@ multicast_send(void)
   PRINTF(" (msg=0x%08lx)", (unsigned long)uip_ntohl(*((uint32_t *)buf)));
   PRINTF(" %lu bytes\n", (unsigned long)sizeof(id));
 
-  PRINTF("Out:%lu\n", seq_id);
+  PRINTF("Out;%lu\n", seq_id);
 
   seq_id++;
   uip_udp_packet_send(mcast_conn, buf, sizeof(id));
@@ -176,8 +176,7 @@ PROCESS_THREAD(rpl_root_process, ev, data)
     if(etimer_expired(&et)) {
       if(seq_id == ITERATIONS) {
         etimer_stop(&et);
-        PRINTF("%u; %lu; %lu; %lu; %lu; %lu; %lu;\n",
-          0,
+        PRINTF("n; %lu; %lu; %lu; %lu; %lu; %lu\n",
           SIMSTATS_GET(lltx),
           SIMSTATS_GET(pkttx),
           energest_type_time(ENERGEST_TYPE_LISTEN),

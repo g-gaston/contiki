@@ -82,7 +82,7 @@ tcpip_handler(void)
     // PRINTF("In: [0x%08lx], TTL %u, total %u\n",
     //     uip_ntohl((unsigned long) *((uint32_t *)(uip_appdata))),
     //     UIP_IP_BUF->ttl, count);
-    PRINTF("In:%lu\n",
+    PRINTF("In;%lu\n",
       (unsigned long)uip_ntohl((unsigned long) *((uint32_t *)(uip_appdata))));
   }
   return;
@@ -147,7 +147,7 @@ PROCESS_THREAD(mcast_sink_process, ev, data)
       tcpip_handler();
       etimer_restart(&et);
     } else if(etimer_expired(&et) && etimer_expired(&et_init)) {
-      PRINTF("%u; %lu; %lu; %lu; %lu; %lu; %lu;\n",
+      PRINTF("%u; %lu; %lu; %lu; %lu; %lu; %lu\n",
         count,
         SIMSTATS_GET(lltx),
         SIMSTATS_GET(pkttx),
