@@ -796,9 +796,9 @@
   <plugin>
     org.contikios.cooja.plugins.ScriptRunner
     <plugin_config>
-      <script>simulation_time = 225000;&#xD;
+      <script>simulation_time = 285000;&#xD;
 &#xD;
-TIMEOUT(225000, timeout_func()); /* milliseconds. print last msg at timeout */&#xD;
+TIMEOUT(285000, timeout_func()); /* milliseconds. print last msg at timeout */&#xD;
 &#xD;
 outs = new Array(100);&#xD;
 total_time = 0;&#xD;
