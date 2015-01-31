@@ -28,8 +28,14 @@ $(CONTIKI)/tools/cooja/dist/cooja.jar:
 ifneq ($(MAKECMDGOALS),clean)
 .PHONY: $(MAKECMDGOALS)
 .PRECIOUS: $(MAKECMDGOALS)
+ifeq ($(nogui),Simulation)
 $(MAKECMDGOALS): $(CONTIKI)/tools/cooja/dist/cooja.jar
-	 java -mx512m -jar $< -quickstart='$(firstword $(MAKECMDGOALS))' -contiki='$(CONTIKI)'
+		java -mx512m -jar $< -nogui='$(firstword $(MAKECMDGOALS))' -contiki='$(CONTIKI)'
+else
+# Quickstart rule
+$(MAKECMDGOALS): $(CONTIKI)/tools/cooja/dist/cooja.jar
+		java -mx512m -jar $< -quickstart='$(firstword $(MAKECMDGOALS))' -contiki='$(CONTIKI)'
+endif
 endif
 
 endif ## QUICKSTART
