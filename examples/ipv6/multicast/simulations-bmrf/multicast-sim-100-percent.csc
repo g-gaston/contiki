@@ -8,7 +8,7 @@
   <project EXPORT="discard">[APPS_DIR]/powertracker</project>
   <simulation>
     <title>BMRF-test-sky</title>
-    <randomseed>123456</randomseed>
+    <randomseed>#randomseed#</randomseed>
     <motedelay_us>1000000</motedelay_us>
     <radiomedium>
       org.contikios.cooja.radiomediums.UDGM
@@ -93,8 +93,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>185.37380004942156</x>
-        <y>90.5552270848082</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -107,8 +107,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>20.00096649397034</x>
-        <y>138.03385215499452</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -121,8 +121,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>171.03359182768395</x>
-        <y>92.11332502380473</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -135,8 +135,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>133.9520806004902</x>
-        <y>43.26158364433959</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -149,8 +149,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>147.9516714482738</x>
-        <y>33.01325730925691</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -163,8 +163,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>95.12421260979409</x>
-        <y>183.04369480248513</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -177,8 +177,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>79.91162472703583</x>
-        <y>49.97637582612342</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -191,8 +191,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>37.40771631950148</x>
-        <y>195.65567666158387</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -205,8 +205,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>141.2709259136303</x>
-        <y>177.89707454364955</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -219,8 +219,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>14.648589763477226</x>
-        <y>165.6951579814542</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -233,8 +233,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>40.074108086319036</x>
-        <y>126.01112379653108</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -247,8 +247,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>81.6867509592869</x>
-        <y>188.33701179759052</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -261,8 +261,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>166.70857918668682</x>
-        <y>64.7462161806976</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -275,8 +275,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>63.39333607289781</x>
-        <y>119.77174867075912</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -289,8 +289,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>195.59179770961256</x>
-        <y>60.00305173530984</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -303,8 +303,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>81.81559680732053</x>
-        <y>53.131041810437395</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -317,8 +317,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>187.31360423931739</x>
-        <y>39.018229057885634</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -331,8 +331,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>142.17838888280238</x>
-        <y>115.90041261583524</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -345,8 +345,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>56.98689659084981</x>
-        <y>20.398458895824902</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -359,8 +359,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>120.4962823669351</x>
-        <y>128.56372814957328</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -373,8 +373,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>188.33649860533626</x>
-        <y>155.01540748061905</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -387,8 +387,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>44.42828129537701</x>
-        <y>23.33758610912515</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -401,8 +401,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>113.72430528812674</x>
-        <y>5.969906897850841</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -415,8 +415,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>94.6399240951318</x>
-        <y>184.03091526358457</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -429,8 +429,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>188.6898851944563</x>
-        <y>30.9057550741203</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -443,8 +443,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>190.5841010274812</x>
-        <y>130.37655550343743</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -457,8 +457,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>65.87419440205873</x>
-        <y>139.08497360080673</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -471,8 +471,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>160.90395842867358</x>
-        <y>189.0728829503758</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -485,8 +485,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>126.96070845571434</x>
-        <y>183.71089882560062</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -499,8 +499,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>67.6075012635396</x>
-        <y>35.06452492262464</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -513,8 +513,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>131.45836542467214</x>
-        <y>56.26064324309343</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -527,8 +527,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>172.14605407613848</x>
-        <y>75.47741855710497</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -541,8 +541,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>166.0841021856015</x>
-        <y>97.6971653631101</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -555,8 +555,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>52.30604075147589</x>
-        <y>19.67535615943399</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -569,8 +569,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>65.87566244172251</x>
-        <y>189.3810624466019</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -583,8 +583,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>137.52775301553692</x>
-        <y>126.06770472653335</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -597,8 +597,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>175.04689606835018</x>
-        <y>76.67651160257749</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -611,8 +611,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>197.40433293771312</x>
-        <y>142.89182781261886</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -625,8 +625,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>28.434516391407104</x>
-        <y>187.40157979860155</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -639,8 +639,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>48.57141933724556</x>
-        <y>28.913931691103013</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -653,8 +653,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>178.9964376858025</x>
-        <y>96.54409645633832</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -667,8 +667,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>128.2309739851814</x>
-        <y>122.90912356793815</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -681,8 +681,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>48.403477260838976</x>
-        <y>53.557498098421696</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -695,8 +695,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>91.79419738720944</x>
-        <y>159.34054599294117</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -709,8 +709,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>20.888307771048776</x>
-        <y>8.94983670110079</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -723,8 +723,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>35.58635333530715</x>
-        <y>142.6790068030755</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -737,8 +737,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>179.12347271045337</x>
-        <y>167.04103707392355</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -751,8 +751,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>115.61309196995731</x>
-        <y>94.48371576067534</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -765,8 +765,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>148.31430088035086</x>
-        <y>150.32133381487273</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -779,8 +779,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>56.80188967266362</x>
-        <y>185.27199987266582</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -793,8 +793,8 @@
       <breakpoints />
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>83.60831851969796</x>
-        <y>20.805542383791863</y>
+        <x>XorYcoords</x>
+        <y>XorYcoords</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -852,9 +852,12 @@
   <plugin>
     org.contikios.cooja.plugins.ScriptRunner
     <plugin_config>
-      <script>simulation_time = 785000;&#xD;
+      <script>//import Java Package to JavaScript&#xD;
+importPackage(java.io);&#xD;
 &#xD;
-TIMEOUT(785000, timeout_func()); /* milliseconds. print last msg at timeout */&#xD;
+simulation_time = 785000;&#xD;
+&#xD;
+TIMEOUT(785000, timeout_func()); /* milliseconds */&#xD;
 &#xD;
 outs = new Array(100);&#xD;
 total_time = 0;&#xD;
@@ -870,66 +873,100 @@ cpu_time = 0;&#xD;
 total_subscribed = 0;&#xD;
 total_nodes = 0;&#xD;
 &#xD;
+fr = new File("raw_results.csv");&#xD;
+fd = new File("delay_results.csv");&#xD;
+fs = new File("summary_results.csv");&#xD;
+//Use this if using the GUI &#xD;
+//f = new File("../../../examples/ipv6/multicast/simulations-bmrf/log.txt");&#xD;
+tfraw = new FileWriter(fr);&#xD;
+tfdelay = new FileWriter(fd);&#xD;
+tfsummary = new FileWriter(fs);&#xD;
+&#xD;
 timeout_func = function simulationEnd() {&#xD;
-	/* Extract PowerTracker statistics */&#xD;
-	plugin = mote.getSimulation().getCooja().getStartedPlugin("PowerTracker");&#xD;
-	if (plugin != null) {&#xD;
-	stats = plugin.radioStatistics();&#xD;
-	splited_stats = stats.split(/\r\n|\n|\r/);&#xD;
-	splited_on = splited_stats[0].split(" ");&#xD;
-	splited_tx = splited_stats[1].split(" ");&#xD;
-	splited_rx = splited_stats[2].split(" ");&#xD;
-	splited_int = splited_stats[3].split(" ");&#xD;
-	idle_listening = (splited_on[2]-splited_tx[2]-splited_rx[2])/(1000000*51);&#xD;
-	log.log("PowerTracker: Extracted statistics:\n"&#xD;
-		+ "AVG ON " + splited_on[2]/(1000000*51) + "s " + splited_on[4] + "%" +"\n"&#xD;
-		+ "AVG TX " + splited_tx[2]/(1000000*51) + "s " + splited_tx[4] + "%" + "\n"&#xD;
-		+ "AVG RX " + splited_rx[2]/(1000000*51) + "s " + splited_rx[4] + "%" + "\n"&#xD;
-		+ "AVG IDLE LISTENING " + idle_listening + "s " + idle_listening*100/(simulation_time/1000) + "%" + "\n"&#xD;
-		+ "AVG INT " + splited_int[2]/(1000000*51) + "s " + splited_int[4] + "%" + "\n"&#xD;
-		+ "\n");&#xD;
-	} else {&#xD;
-	log.log("No PowerTracker plugin\n");&#xD;
-	}&#xD;
-	log.log("Average end-to-end delay: " + (total_time/total_ins) +"\n");&#xD;
-	log.log("Packet delivery ratio: " + (pdr/total_subscribed) + "\n");&#xD;
-	log.log("Frame transmission: " + (frame_tx/total_nodes) + "\n");&#xD;
-	log.log("Packet transmission: " + (msg_tx/total_nodes) + "\n");&#xD;
-	log.log("Rx time: " + (rx_time/total_nodes) + " = " + ((rx_time/total_nodes)/32768) + " s" + "\n");&#xD;
-	log.log("Tx time: " + (tx_time/total_nodes) + " = " + ((tx_time/total_nodes)/32768) + " s" + "\n");&#xD;
-	log.log("LPM time: " + (lpm_time/total_nodes) + " = " + ((lpm_time/total_nodes)/32768) + " s" + "\n");&#xD;
-	log.log("CPU time: " + (cpu_time/total_nodes) + " = " + ((cpu_time/total_nodes)/32768) + " s" + "\n");&#xD;
+  /* Extract PowerTracker statistics */&#xD;
+  plugin = mote.getSimulation().getCooja().getStartedPlugin("PowerTracker");&#xD;
+  if (plugin != null) {&#xD;
+    stats = plugin.radioStatistics();&#xD;
+    splited_stats = stats.split(/\r\n|\n|\r/);&#xD;
+    splited_on = splited_stats[0].split(" ");&#xD;
+    splited_tx = splited_stats[1].split(" ");&#xD;
+    splited_rx = splited_stats[2].split(" ");&#xD;
+    splited_int = splited_stats[3].split(" ");&#xD;
+    idle_listening = (splited_on[2]-splited_tx[2]-splited_rx[2])/(1000000*51);&#xD;
+    //log.log("PowerTracker: Extracted statistics:\n"&#xD;
+    //  + "AVG ON " + splited_on[2]/(1000000*51) + "s " + splited_on[4] + "%" +"\n"&#xD;
+    //  + "AVG TX " + splited_tx[2]/(1000000*51) + "s " + splited_tx[4] + "%" + "\n"&#xD;
+    //  + "AVG RX " + splited_rx[2]/(1000000*51) + "s " + splited_rx[4] + "%" + "\n"&#xD;
+    //  + "AVG IDLE LISTENING " + idle_listening + "s " + idle_listening*100/(simulation_time/1000) + "%" + "\n"&#xD;
+    //  + "AVG INT " + splited_int[2]/(1000000*51) + "s " + splited_int[4] + "%" + "\n"&#xD;
+    //  + "\n");&#xD;
+    tfsummary.write("PowerTracker: Extracted statistics:\n"&#xD;
+    + "AVG ON " + splited_on[2]/(1000000*51) + "s " + splited_on[4] + "%" +"\n"&#xD;
+    + "AVG TX " + splited_tx[2]/(1000000*51) + "s " + splited_tx[4] + "%" + "\n"&#xD;
+    + "AVG RX " + splited_rx[2]/(1000000*51) + "s " + splited_rx[4] + "%" + "\n"&#xD;
+    + "AVG IDLE LISTENING " + idle_listening + "s " + idle_listening*100/(simulation_time/1000) + "%" + "\n"&#xD;
+    + "AVG INT " + splited_int[2]/(1000000*51) + "s " + splited_int[4] + "%" + "\n"&#xD;
+    + "\n");&#xD;
+  } else {&#xD;
+    //log.log("No PowerTracker plugin\n");&#xD;
+    tfsummary.write("No PowerTracker plugin\n");&#xD;
+  }&#xD;
+  //log.log("Average end-to-end delay: " + (total_time/total_ins) +"\n");&#xD;
+  //log.log("Packet delivery ratio: " + (pdr/total_subscribed) + "\n");&#xD;
+  //log.log("Frame transmission: " + (frame_tx/total_nodes) + "\n");&#xD;
+  //log.log("Packet transmission: " + (msg_tx/total_nodes) + "\n");&#xD;
+  //log.log("Rx time: " + (rx_time/total_nodes) + " = " + ((rx_time/total_nodes)/32768) + " s" + "\n");&#xD;
+  //log.log("Tx time: " + (tx_time/total_nodes) + " = " + ((tx_time/total_nodes)/32768) + " s" + "\n");&#xD;
+  //log.log("LPM time: " + (lpm_time/total_nodes) + " = " + ((lpm_time/total_nodes)/32768) + " s" + "\n");&#xD;
+  //log.log("CPU time: " + (cpu_time/total_nodes) + " = " + ((cpu_time/total_nodes)/32768) + " s" + "\n");&#xD;
+&#xD;
+  tfsummary.write("Average end-to-end delay: " + (total_time/total_ins) +"\n");&#xD;
+  tfsummary.write("Packet delivery ratio: " + (pdr/total_subscribed) + "\n");&#xD;
+  tfsummary.write("Frame transmission: " + (frame_tx/total_nodes) + "\n");&#xD;
+  tfsummary.write("Packet transmission: " + (msg_tx/total_nodes) + "\n");&#xD;
+  tfsummary.write("Rx time: " + (rx_time/total_nodes) + " = " + ((rx_time/total_nodes)/32768) + " s" + "\n");&#xD;
+  tfsummary.write("Tx time: " + (tx_time/total_nodes) + " = " + ((tx_time/total_nodes)/32768) + " s" + "\n");&#xD;
+  tfsummary.write("LPM time: " + (lpm_time/total_nodes) + " = " + ((lpm_time/total_nodes)/32768) + " s" + "\n");&#xD;
+  tfsummary.write("CPU time: " + (cpu_time/total_nodes) + " = " + ((cpu_time/total_nodes)/32768) + " s" + "\n");&#xD;
+    &#xD;
+  tfraw.close();&#xD;
+  tfdelay.close();&#xD;
+  tfsummary.close();&#xD;
+  log.testOK();&#xD;
 }&#xD;
 &#xD;
 while(true){&#xD;
-	YIELD();&#xD;
-	time_msg = sim.getSimulationTimeMillis();&#xD;
-	message = msg.split(";");&#xD;
-    //log.log(""+message[0]+"\n");&#xD;
-	if (message.length == 2) {&#xD;
-		if (message[0]=="Out") {&#xD;
-			outs[parseInt(message[1])] = time_msg;&#xD;
-            //log.log("New out time\n");&#xD;
-            //log.log("outs["+parseInt(message[1])+"] = "+outs[parseInt(message[1])]+" = "+time_msg+"\n");&#xD;
-		} else if (message[0]=="In") {&#xD;
-			total_time = total_time + (time_msg - outs[parseInt(message[1])]);&#xD;
-			total_ins++;&#xD;
-            //log.log("Delay: "+time_msg+" + "+outs[parseInt(message[1])]+" = "+(time_msg - outs[parseInt(message[1])])+"\n");&#xD;
-            //log.log(""+parseInt(message[1])+";"+id+";"+(time_msg - outs[parseInt(message[1])])+"\n");&#xD;
-		}&#xD;
-	} else if (message.length == 7) {&#xD;
-		if (message[0] != "n") {&#xD;
-			pdr += parseInt(message[0]);&#xD;
-			total_subscribed++;&#xD;
-		}&#xD;
-		frame_tx += parseInt(message[1]);&#xD;
-		msg_tx += parseInt(message[2]);&#xD;
-		rx_time += parseInt(message[3]);&#xD;
-		tx_time += parseInt(message[4]);&#xD;
-		lpm_time += parseInt(message[5]);&#xD;
-		cpu_time += parseInt(message[6]);&#xD;
-		total_nodes++;&#xD;
-	}&#xD;
+  YIELD();&#xD;
+  time_msg = sim.getSimulationTimeMillis();&#xD;
+  message = msg.split(";");&#xD;
+  //log.log(""+message[0]+"\n");&#xD;
+  if (message.length == 2) {&#xD;
+    if (message[0]=="Out") {&#xD;
+      outs[parseInt(message[1])] = time_msg;&#xD;
+      //log.log("New out time\n");&#xD;
+      //log.log("outs["+parseInt(message[1])+"] = "+outs[parseInt(message[1])]+" = "+time_msg+"\n");&#xD;
+    } else if (message[0]=="In") {&#xD;
+      total_time = total_time + (time_msg - outs[parseInt(message[1])]);&#xD;
+      total_ins++;&#xD;
+      //log.log("Delay: "+time_msg+" + "+outs[parseInt(message[1])]+" = "+(time_msg - outs[parseInt(message[1])])+"\n");&#xD;
+      //log.log(""+parseInt(message[1])+";"+id+";"+(time_msg - outs[parseInt(message[1])])+"\n");&#xD;
+      tfdelay.write(""+parseInt(message[1])+";"+id+";"+(time_msg - outs[parseInt(message[1])])+"\n");&#xD;
+    }&#xD;
+  } else if (message.length == 7) {&#xD;
+    if (message[0] != "n") {&#xD;
+      pdr += parseInt(message[0]);&#xD;
+      total_subscribed++;&#xD;
+    }&#xD;
+    time_msg_seconds = time_msg/1000;
+    frame_tx += parseInt(message[1]);&#xD;
+    msg_tx += parseInt(message[2]);&#xD;
+    rx_time += parseInt(message[3]);&#xD;
+    tx_time += parseInt(message[4]);&#xD;
+    lpm_time += parseInt(message[5]);&#xD;
+    cpu_time += parseInt(message[6]);&#xD;
+    total_nodes++;&#xD;
+    tfraw.write((time_msg_seconds/60|0) + ":" + (time_msg_seconds % 60).toFixed(3) + ";ID:" + id + ";" + id + ";" + msg + "\n");&#xD;
+  }&#xD;
 }</script>
       <active>true</active>
     </plugin_config>
