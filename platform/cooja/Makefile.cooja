@@ -8,7 +8,7 @@
 ## can be loaded into the Java part of COOJA.
 
 ifndef CONTIKI
-  $(error CONTIKI not defined!)
+	$(error CONTIKI not defined!)
 endif
 
 ### Assuming simulator quickstart if no JNI library name set from Cooja
@@ -24,12 +24,17 @@ $(CONTIKI)/tools/cooja/dist/cooja.jar:
 	@echo "Creating COOJA Java archive..."
 	(cd $(CONTIKI)/tools/cooja && ant jar)
 
-# Quickstart rule
 ifneq ($(MAKECMDGOALS),clean)
 .PHONY: $(MAKECMDGOALS)
 .PRECIOUS: $(MAKECMDGOALS)
+ifeq ($(nogui),Simulation)
 $(MAKECMDGOALS): $(CONTIKI)/tools/cooja/dist/cooja.jar
-	 java -mx512m -jar $< -quickstart='$(firstword $(MAKECMDGOALS))' -contiki='$(CONTIKI)'
+		java -mx512m -jar $< -nogui='$(firstword $(MAKECMDGOALS))' -contiki='$(CONTIKI)'
+else
+# Quickstart rule
+$(MAKECMDGOALS): $(CONTIKI)/tools/cooja/dist/cooja.jar
+		java -mx512m -jar $< -quickstart='$(firstword $(MAKECMDGOALS))' -contiki='$(CONTIKI)'
+endif
 endif
 
 endif ## QUICKSTART
@@ -47,11 +52,11 @@ CONTIKI_TARGET_DIRS = . dev lib sys cfs net
 # (COOJA_SOURCEDIRS contains additional sources dirs set from simulator)
 vpath %.c $(COOJA_SOURCEDIRS)
 
-COOJA_BASE	= simEnvChange.c cooja_mt.c cooja_mtarch.c rtimer-arch.c slip.c watchdog.c rimestats.c
+COOJA_BASE  = simEnvChange.c cooja_mt.c cooja_mtarch.c rtimer-arch.c slip.c watchdog.c rimestats.c
 
-COOJA_INTFS	= beep.c button-sensor.c ip.c leds-arch.c moteid.c \
-		    pir-sensor.c rs232.c vib-sensor.c \
-		    clock.c log.c cfs-cooja.c cooja-radio.c \
+COOJA_INTFS = beep.c button-sensor.c ip.c leds-arch.c moteid.c \
+				pir-sensor.c rs232.c vib-sensor.c \
+				clock.c log.c cfs-cooja.c cooja-radio.c \
 			eeprom.c
 
 COOJA_CORE = random.c sensors.c leds.c symbols.c
@@ -75,19 +80,19 @@ CFLAGSNO = $(EXTRA_CC_ARGS) -Wall -g -I/usr/local/include -DCLASSNAME=$(CLASSNAM
 CFLAGS   += $(CFLAGSNO)
 
 ifeq ($(UIP_CONF_IPV6),1)
-  CFLAGS += -DWITH_UIP6=1
+	CFLAGS += -DWITH_UIP6=1
 endif
 ifdef WITH_UIP
-  CFLAGS += -DWITH_UIP=1
+	CFLAGS += -DWITH_UIP=1
 endif
 
 ## Copied from Makefile.include, since Cooja overrides CFLAGS et al
 ifeq ($(UIP_CONF_IPV6),1)
-  CFLAGS += -DUIP_CONF_IPV6=1
-  ifneq ($(UIP_CONF_RPL),0)
-    CFLAGS += -DUIP_CONF_IPV6_RPL=1
-  endif # UIP_CONF_RPL
+	CFLAGS += -DUIP_CONF_IPV6=1
+	ifneq ($(UIP_CONF_RPL),0)
+		CFLAGS += -DUIP_CONF_IPV6_RPL=1
+	endif # UIP_CONF_RPL
 endif # UIP_CONF_IPV6
 
 MODULES += core/net core/net/ip core/net/ipv4 \
-           core/net/ipv6 core/net/mac core/net/rime core/net/rpl
+					 core/net/ipv6 core/net/mac core/net/rime core/net/rpl
