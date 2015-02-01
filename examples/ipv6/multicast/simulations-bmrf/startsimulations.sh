@@ -22,7 +22,7 @@ function replaceMore()
 }
 
 POSITION="XorYcoords"
-SIMSPERSCENARIO=3
+SIMSPERSCENARIO=10
 
 declare -a RESULTFILES=('raw' 'delay' 'summary');
 declare -a SIMTOPOLOGIES=('25' '50' '75' '100');
