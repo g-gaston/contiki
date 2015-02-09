@@ -1240,7 +1240,7 @@ public class Cooja extends Observable {
     ToolTipManager.sharedInstance().setDismissDelay(60000);
 
     /* Nimbus */
-    try {
+    /*try {
       String osName = System.getProperty("os.name").toLowerCase();
       if (osName.startsWith("linux")) {
         try {
@@ -1259,7 +1259,7 @@ public class Cooja extends Observable {
       }
       return;
     } catch (Exception e) {
-    }
+    }*/
 
     /* System */
     try {
