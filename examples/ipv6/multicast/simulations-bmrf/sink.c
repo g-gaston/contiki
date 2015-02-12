@@ -55,6 +55,8 @@
 
 static struct uip_udp_conn *sink_conn;
 static uint16_t count;
+static uint8_t received[100];
+static uint8_t duplicates;
 
 #define UIP_IP_BUF   ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
 
@@ -83,13 +85,21 @@ AUTOSTART_PROCESSES(&mcast_sink_process);
 static void
 tcpip_handler(void)
 {
+  static uint8_t packet_number;
   if(uip_newdata()) {
-    count++;
-    // PRINTF("In: [0x%08lx], TTL %u, total %u\n",
-    //     uip_ntohl((unsigned long) *((uint32_t *)(uip_appdata))),
-    //     UIP_IP_BUF->ttl, count);
-    PRINTF("In;%lu\n",
-      (unsigned long)uip_ntohl((unsigned long) *((uint32_t *)(uip_appdata))));
+    packet_number = (uint8_t)uip_ntohl((unsigned long) *((uint32_t *)(uip_appdata)));
+    if (received[packet_number] == 0) {
+      count++;
+      received[packet_number] = 1;
+      PRINTF("In;%u\n",
+      packet_number);
+    } else {
+      duplicates++;
+      PRINTF("Received duplicate; packet number %u from ",
+      packet_number);
+      PRINTLLADDR(packetbuf_addr(PACKETBUF_ADDR_SENDER));
+      PRINTF("\n");
+    }
   }
   return;
 }
@@ -161,6 +171,8 @@ PROCESS_THREAD(mcast_sink_process, ev, data)
         energest_type_time(ENERGEST_TYPE_TRANSMIT),
         energest_type_time(ENERGEST_TYPE_LPM),
         energest_type_time(ENERGEST_TYPE_CPU));
+      PRINTF("Duplicates; %u\n",
+        duplicates);
     }
     // else if(etimer_expired(&et) && !etimer_expired(&et_init)){
     //   etimer_restart(&et);
