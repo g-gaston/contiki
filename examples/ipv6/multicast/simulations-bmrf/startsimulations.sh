@@ -4,7 +4,7 @@ POSITION="XorYcoords"
 MOTE_IDENT="moteIdentifier"
 SIMSPERSCENARIO=4
 
-declare -a RESULTFILES=('raw' 'delay' 'summary');
+declare -a RESULTFILES=('raw' 'delay' 'summary' 'duplicates' 'duplicates_raw');
 declare -a PERCENTTOPOLOGIES=('25' '50' '75' '100');
 declare -a ENGINECONF=('SMRF' 'BMRF' 'BMRF' 'BMRF'
 					   'BMRF' 'BMRF' 'BMRF' 'BMRF'
