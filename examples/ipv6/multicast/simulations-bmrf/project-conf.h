@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2010, Loughborough University - Computer Science
  * All rights reserved.
@@ -43,9 +44,9 @@
 #include "net/ipv6/multicast/uip-mcast6-engines.h"
 
 /* Change this to switch engines. Engine codes in uip-mcast6-engines.h */
-#define UIP_MCAST6_CONF_ENGINE UIP_MCAST6_ENGINE_BMRF
-#define BMRF_CONF_MODE BMRF_MIXED_MODE
-#define BMRF_CONF_BROADCAST_THRESHOLD   1
+#define UIP_MCAST6_CONF_ENGINE	UIP_MCAST6_ENGINE_BMRF
+#define BMRF_CONF_MODE	BMRF_UNICAST_MODE
+#define BMRF_CONF_BROADCAST_THRESHOLD	1
 
 /* For Imin: Use 16 over NullRDC, 64 over Contiki MAC */
 #define ROLL_TM_CONF_IMIN_1         64
@@ -53,10 +54,12 @@
 #undef UIP_CONF_IPV6_RPL
 #undef UIP_CONF_ND6_SEND_RA
 #undef UIP_CONF_ROUTER
+#undef UIP_CONF_IPV6
 #define UIP_CONF_IPV6_RPL            1
 #define UIP_CONF_ND6_SEND_RA         0
 #define UIP_CONF_ROUTER              1
 #define UIP_MCAST6_ROUTE_CONF_ROUTES 8
+#define UIP_CONF_IPV6				 1
 #define CSMA_CONF_MAX_NEIGHBOR_QUEUES UIP_MCAST6_ROUTE_CONF_ROUTES
 //#define QUEUEBUF_CONF_NUM 10
 
