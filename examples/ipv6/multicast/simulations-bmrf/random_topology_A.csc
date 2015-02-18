@@ -855,9 +855,9 @@
       <script>//import Java Package to JavaScript&#xD;
 importPackage(java.io);&#xD;
 &#xD;
-simulation_time = 785000;&#xD;
+simulation_time = 1185000;&#xD;
 &#xD;
-TIMEOUT(785000, timeout_func()); /* milliseconds */&#xD;
+TIMEOUT(1185000, timeout_func()); /* milliseconds */&#xD;
 &#xD;
 outs = new Array(100);&#xD;
 total_time = 0;&#xD;

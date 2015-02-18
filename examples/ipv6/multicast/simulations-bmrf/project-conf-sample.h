@@ -75,6 +75,6 @@
 /* Simulation parameters */
 #define MCAST_CONF_MESSAGES 100
 #define MCAST_CONF_SEND_INTERVAL 3
-#define MCAST_CONF_START_DELAY 420
+#define MCAST_CONF_START_DELAY 820
 
 #endif /* PROJECT_CONF_H_ */
