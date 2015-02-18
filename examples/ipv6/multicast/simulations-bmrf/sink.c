@@ -68,6 +68,12 @@ static uint8_t duplicates;
 #define START_DELAY 60
 #endif
 
+#define SUBSCRIBING_TIME 100
+
+#if SUBSCRIBING_TIME > START_DELAY
+#define SUBSCRIBING_TIME START_DELAY
+#endif
+
 #if defined(MCAST_CONF_SEND_INTERVAL) && defined(MCAST_CONF_MESSAGES) && defined(MCAST_CONF_START_DELAY)
 #define WAIT_FOR_END ((MCAST_CONF_SEND_INTERVAL * MCAST_CONF_MESSAGES) + MCAST_CONF_START_DELAY + 63)
 #else
@@ -138,24 +144,11 @@ PROCESS_THREAD(mcast_sink_process, ev, data)
   PROCESS_BEGIN();
 
   etimer_set(&et, WAIT_FOR_END * CLOCK_SECOND);
-  //etimer_set(&et_init, START_DELAY * CLOCK_SECOND);
+  etimer_set(&et_init, (START_DELAY - SUBSCRIBING_TIME) * CLOCK_SECOND);
 
   PRINTF("Multicast Engine: '%s'\n", UIP_MCAST6.name);
 
-  if(join_mcast_group() == NULL) {
-    PRINTF("Failed to join multicast group\n");
-    PROCESS_EXIT();
-  }
-
   count = 0;
-
-  sink_conn = udp_new(NULL, UIP_HTONS(0), NULL);
-  udp_bind(sink_conn, UIP_HTONS(MCAST_SINK_UDP_PORT));
-
-  PRINTF("Listening: ");
-  PRINT6ADDR(&sink_conn->ripaddr);
-  PRINTF(" local/remote port %u/%u\n",
-        UIP_HTONS(sink_conn->lport), UIP_HTONS(sink_conn->rport));
 
   while(1) {
     PROCESS_YIELD();
@@ -173,6 +166,19 @@ PROCESS_THREAD(mcast_sink_process, ev, data)
         energest_type_time(ENERGEST_TYPE_CPU));
       PRINTF("Duplicates; %u\n",
         duplicates);
+    } else if(etimer_expired(&et_init)) {
+      if(join_mcast_group() == NULL) {
+        PRINTF("Failed to join multicast group\n");
+        PROCESS_EXIT();
+      }
+
+      sink_conn = udp_new(NULL, UIP_HTONS(0), NULL);
+      udp_bind(sink_conn, UIP_HTONS(MCAST_SINK_UDP_PORT));
+
+      PRINTF("Listening: ");
+      PRINT6ADDR(&sink_conn->ripaddr);
+      PRINTF(" local/remote port %u/%u\n",
+            UIP_HTONS(sink_conn->lport), UIP_HTONS(sink_conn->rport));
     }
     // else if(etimer_expired(&et) && !etimer_expired(&et_init)){
     //   etimer_restart(&et);
