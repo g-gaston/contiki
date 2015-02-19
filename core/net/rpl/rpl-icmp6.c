@@ -819,6 +819,39 @@ dao_output(rpl_parent_t *parent, uint8_t lifetime)
   /* Destination Advertisement Object */
   uip_ipaddr_t prefix;
 
+#if UIP_MCAST6_ENGINE == UIP_MCAST6_ENGINE_BMRF
+  uip_mcast6_route_t *mcast_aux_route;
+  uint8_t i;
+
+  /* Send a DAO for own multicast addresses */
+  for(i = 0; i < UIP_DS6_MADDR_NB; i++) {
+    if(uip_ds6_if.maddr_list[i].isused
+        && uip_is_addr_mcast_global(&uip_ds6_if.maddr_list[i].ipaddr)) {
+      dao_output_target(parent,
+                        &uip_ds6_if.maddr_list[i].ipaddr, lifetime);
+    }
+  }
+
+  mcast_group = uip_mcast6_route_list_head();
+  while(mcast_group != NULL) {
+    if(uip_ds6_maddr_lookup(&mcast_group->group) == NULL) {
+      mcast_aux_route = uip_mcast6_route_list_head();
+      while(mcast_aux_route != mcast_group) {
+        if(uip_ipaddr_cmp(&mcast_group->group, &mcast_aux_route->group)) {
+          break;
+        }
+        mcast_aux_route = list_item_next(mcast_aux_route);
+      }
+      if(mcast_aux_route == mcast_group) {
+        dao_output_target(parent,
+                          &mcast_group->group, lifetime);
+      }
+    }
+    mcast_group = list_item_next(mcast_group);
+  }
+#endif /*UIP_MCAST6_ENGINE*/
+
+
   if(get_global_addr(&prefix) == 0) {
     PRINTF("RPL: No global address set for this node - suppressing DAO\n");
     return;
