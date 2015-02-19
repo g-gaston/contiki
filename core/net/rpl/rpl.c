@@ -174,8 +174,10 @@ rpl_purge_routes(void)
         /* Don't schedule more than 1 No-Path DAO, let next iteration handle that */
         return;
       }
+      mcast_route = uip_mcast6_route_list_head();
+    } else {
+      mcast_route = list_item_next(mcast_route);
     }
-    mcast_route = list_item_next(mcast_route);
   }
 #else
   while(mcast_route != NULL) {
