@@ -16,7 +16,7 @@ declare -a THRESHOLDCONF=(  '1' '1' '1' '2'
                             '3' '4' '5' '6'
                             '1');
 
-declare -a RANDOMTOPOLOGIES=('random_topology_A.csc')
+declare -a RANDOMTOPOLOGIES=('random_topology_A' 'random_topology_B')
 
 declare -a remaining_motes=()
 declare -a remaining_motes_aux=()
@@ -25,6 +25,7 @@ declare -a motes_names_aux=()
 
 for topology in "${RANDOMTOPOLOGIES[@]}"
 do
+    mkdir $topology
     for ((j=1; j <= $SIMSPERSCENARIO; j++))
     do
         echo "Generating random topologies"
@@ -34,7 +35,7 @@ do
             subscribed_number=$((50*$percenttop/100))
             remaining_motes=(1 $((50-$subscribed_number)) $subscribed_number)
             motes_names=('sky1' 'sky2' 'sky3')
-            cp $topology "multicast-sim-"$percenttop"-percent_tosim.csc"
+            cp $topology".csc" "multicast-sim-"$percenttop"-percent_tosim.csc"
             sed -i s/\#randomseed\#/$randomseed/ "multicast-sim-"$percenttop"-percent_tosim.csc"
 
             rand_mote="moteIdentifier"
@@ -78,7 +79,7 @@ do
 
                 for filename in "${RESULTFILES[@]}"
                 do
-                    mv $filename"_results.csv" $filename"_results_"$percenttop"-percent_"${ENGINECONF[i]}"_"${MODECONF[i]}"_"${THRESHOLDCONF[i]}"_iteration-"$j".csv"
+                    mv $filename"_results.csv" $topology"/"$filename"_results_"$percenttop"-percent_"${ENGINECONF[i]}"_"${MODECONF[i]}"_"${THRESHOLDCONF[i]}"_iteration-"$j".csv"
                 done
             done
 
